@@ -32,10 +32,7 @@ ST ST GG ST ST ST ST ST ST 00 00 00 00 ST ST 00 00 00 00 00 00 ST ST ST ST ST GG
 
 TS - train station
 RR - rails
-ST - street top
-ST - street bottom
-SL - street left
-SR - street right
+ST - street
 GG - gate
 
 

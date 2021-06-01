@@ -1,0 +1,22 @@
+{
+  "stationOrder": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "train": [
+    {
+      "type": "PassengerLocomotive",
+      "engine": "steam"
+    },
+    {
+      "type": "CargoLocomotive",
+      "engine": "steam"
+    },
+    {
+      "type": "UniversalLocomotive",
+      "engine": "steam"
+    }
+  ]
+}

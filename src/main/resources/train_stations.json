@@ -1,0 +1,127 @@
+[
+  {
+    "name": "A",
+    "reachable": [
+      {
+        "destination": "B",
+        "xPosition": 2,
+        "yPosition": 27
+      },
+      {
+        "destination": "C",
+        "xPosition": 2,
+        "yPosition": 27
+      },
+      {
+        "destination": "D",
+        "xPosition": 2,
+        "yPosition": 27
+      },
+      {
+        "destination": "E",
+        "xPosition": 2,
+        "yPosition": 27
+      }
+    ]
+  },
+  {
+    "name": "B",
+    "reachable": [
+      {
+        "destination": "A",
+        "xPosition": 6,
+        "yPosition": 6
+      },
+      {
+        "destination": "C",
+        "xPosition": 7,
+        "yPosition": 6
+      },
+      {
+        "destination": "D",
+        "xPosition": 7,
+        "yPosition": 6
+      },
+      {
+        "destination": "E",
+        "xPosition": 7,
+        "yPosition": 6
+      }
+    ]
+  },
+  {
+    "name": "C",
+    "reachable": [
+      {
+        "destination": "A",
+        "xPosition": 19,
+        "yPosition": 12
+      },
+      {
+        "destination": "B",
+        "xPosition": 19,
+        "yPosition": 12
+      },
+      {
+        "destination": "D",
+        "xPosition": 20,
+        "yPosition": 12
+      },
+      {
+        "destination": "E",
+        "xPosition": 20,
+        "yPosition": 13
+      }
+    ]
+  },
+  {
+    "name": "D",
+    "reachable": [
+      {
+        "destination": "A",
+        "xPosition": 26,
+        "yPosition": 1
+      },
+      {
+        "destination": "B",
+        "xPosition": 26,
+        "yPosition": 1
+      },
+      {
+        "destination": "C",
+        "xPosition": 26,
+        "yPosition": 1
+      },
+      {
+        "destination": "E",
+        "xPosition": 26,
+        "yPosition": 1
+      }
+    ]
+  },
+  {
+    "name": "E",
+    "reachable": [
+      {
+        "destination": "A",
+        "xPosition": 26,
+        "yPosition": 25
+      },
+      {
+        "destination": "B",
+        "xPosition": 26,
+        "yPosition": 25
+      },
+      {
+        "destination": "C",
+        "xPosition": 26,
+        "yPosition": 25
+      },
+      {
+        "destination": "D",
+        "xPosition": 26,
+        "yPosition": 25
+      }
+    ]
+  }
+]

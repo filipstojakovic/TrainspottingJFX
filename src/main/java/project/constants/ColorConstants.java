@@ -1,6 +1,6 @@
 package project.constants;
 
-public class ColorConstants
+public abstract class ColorConstants
 {
     public static final String WHITE ="#FFFFFF";
     public static final String BLACK = "#000000";

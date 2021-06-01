@@ -1,9 +1,12 @@
-import project.map.Map;
+import project.map.StartApp;
 
-public class Main
+public abstract class Main
 {
     public static void main(String[] args)
     {
-        Map.main(args);
+        //RUN ME...
+        StartApp.main(args); //becouse bug...
+
     }
+
 }

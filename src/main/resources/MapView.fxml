@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.map.MapController">
+   <BorderPane prefHeight="400.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0">
+      <center>
+          <GridPane fx:id="gridPane" prefHeight="391.0" prefWidth="598.0" BorderPane.alignment="CENTER">
+    </GridPane>
+      </center>
+      <right>
+         <Button mnemonicParsing="false" onAction="#onStartBtnClicked" text="Start" BorderPane.alignment="CENTER" />
+      </right>
+   </BorderPane>
+</AnchorPane>

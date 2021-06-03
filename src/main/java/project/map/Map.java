@@ -18,22 +18,22 @@ public abstract class Map
         return null;
     }
 
-    public static Field getUpField(int x, int y)
+    private static Field getUpField(int x, int y)
     {
         return getField(x, y - 1);
     }
 
-    public static Field getLeftField(int x, int y)
+    private static Field getLeftField(int x, int y)
     {
         return getField(x - 1, y);
     }
 
-    public static Field getRightField(int x, int y)
+    private static Field getRightField(int x, int y)
     {
         return getField(x + 1, y);
     }
 
-    public static Field getBottomField(int x, int y)
+    private static Field getBottomField(int x, int y)
     {
         return getField(x, y + 1);
     }

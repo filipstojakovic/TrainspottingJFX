@@ -1,45 +1,51 @@
-package project.trainstuff.trainstation;
+package project.trainstuff;
 
 import project.map.Field.Field;
+import project.map.Field.RampField;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class TrainLine
+public class RailRoad
 {
     private String startStationName;
     private String endStationName;
     private boolean isOccupied = false;
-    private List<Field> lineRoute;
-    private List<Field> ramps;
+    private List<Field> roadFields;
+    private List<RampField> ramps;
 
-    public TrainLine()
+    public RailRoad()
     {
     }
 
-    public TrainLine(String startStationName, String endStationName, List<Field> lineRoute, List<Field> ramps)
+    public RailRoad(String startStationName, String endStationName, List<Field> roadFields, List<RampField> ramps)
     {
         this.startStationName = startStationName;
         this.endStationName = endStationName;
-        this.lineRoute = lineRoute;
+        this.roadFields = roadFields;
         this.ramps = ramps;
     }
 
     //create reverse copy
-    public TrainLine createReverseLine()
+    public RailRoad createReverseLine()
     {
         String start = endStationName;
         String end = startStationName;
-        List<Field> reverseLine = new ArrayList<>(lineRoute); //deep copy
+
+        List<Field> reverseLine = new ArrayList<>(roadFields); //deep copy
         Collections.reverse(reverseLine);
-        return new TrainLine(start, end, ramps, reverseLine);
+
+        List<RampField> reverseRamps = new ArrayList<>(ramps); //deep copy
+        Collections.reverse(reverseRamps);
+
+        return new RailRoad(start, end, reverseLine, reverseRamps);
     }
 
     public Field getStartingField()
     {
-        return lineRoute.get(0);
+        return roadFields.get(0);
     }
 
     @Override
@@ -47,14 +53,17 @@ public class TrainLine
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TrainLine trainLine = (TrainLine) o;
-        return startStationName.equals(trainLine.startStationName) && endStationName.equals(trainLine.endStationName) && lineRoute.equals(trainLine.lineRoute) && Objects.equals(ramps, trainLine.ramps);
+        RailRoad trainLine = (RailRoad) o;
+        return startStationName.equals(trainLine.startStationName)
+                && endStationName.equals(trainLine.endStationName)
+                && roadFields.equals(trainLine.roadFields)
+                && Objects.equals(ramps, trainLine.ramps);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(startStationName, endStationName, lineRoute, ramps);
+        return Objects.hash(startStationName, endStationName, roadFields, ramps);
     }
 
     public String getStartStationName()
@@ -87,23 +96,23 @@ public class TrainLine
         isOccupied = occupied;
     }
 
-    public List<Field> getRamps()
+    public List<RampField> getRamps()
     {
         return ramps;
     }
 
-    public void setRamps(List<Field> ramps)
+    public void setRamps(List<RampField> ramps)
     {
         this.ramps = ramps;
     }
 
-    public List<Field> getLineRoute()
+    public List<Field> getRoadFields()
     {
-        return lineRoute;
+        return roadFields;
     }
 
-    public void setLineRoute(List<Field> lineRoute)
+    public void setRoadFields(List<Field> roadFields)
     {
-        this.lineRoute = lineRoute;
+        this.roadFields = roadFields;
     }
 }

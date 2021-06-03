@@ -2,9 +2,10 @@ package project.map;
 
 import project.Util.Utils;
 import project.constants.Constants;
-import project.jsonparsers.TrainLineJsonParser;
+import project.jsonparsers.StreetRoadJsonParser;
 import project.jsonparsers.TrainStationJsonParser;
-import project.trainstuff.trainstation.TrainLine;
+import project.streetstuff.StreetRoad;
+import project.trainstuff.RailRoad;
 import project.trainstuff.trainstation.TrainStation;
 
 import java.nio.file.Files;
@@ -31,17 +32,21 @@ public class MapModel
         return mapValues;
     }
 
-    public HashMap<String, TrainStation> initializeTrainLines()
+    public HashMap<String, TrainStation> initializeRailRoads(List<RailRoad> railRoads)
     {
         HashMap<String, TrainStation> trainStationMap = TrainStationJsonParser.getTrainStationsFromJson("./src/main/resources/train_stations.json");
-        List<TrainLine> trainLines = TrainLineJsonParser.createRoadListFromJson("./src/main/resources/allroads/railroads.json"); //TODO: sredi putanju
-        for (var trainline : trainLines)
+        for (var railRoad : railRoads)
         {
-            String trainStationName = trainline.getStartStationName();
+            String trainStationName = railRoad.getStartStationName();
             TrainStation trainStation = trainStationMap.get(trainStationName);
 
-            trainStation.addTrainLine(trainline);
+            trainStation.addTrainLine(railRoad);
         }
         return trainStationMap;
+    }
+
+    public List<StreetRoad> initializeStreetRoads()
+    {
+        return StreetRoadJsonParser.getStreetRoadsFromJson("./src/main/resources/roads/streetroads.json");
     }
 }

@@ -3,15 +3,21 @@ package project.map;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import project.Util.LabelUtils;
 import project.constants.ColorConstants;
 import project.constants.FieldConstants;
-import project.map.Field.*;
-import project.trainstuff.trainstation.TrainStation;
-import project.trainstuff.Train;
+import project.jsonparsers.RailRoadJsonParser;
 import project.jsonparsers.TrainJsonParser;
+import project.map.Field.*;
+import project.streetstuff.StreetRoad;
+import project.streetstuff.streetvehicle.Car;
+import project.streetstuff.streetvehicle.Truck;
+import project.trainstuff.RailRoad;
+import project.trainstuff.Train;
+import project.trainstuff.trainstation.TrainStation;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,6 +35,7 @@ public class MapController implements Initializable
     public static GridPane mapPane;
 
     private HashMap<String, TrainStation> trainStationMap;
+    private List<StreetRoad> streetRoads;
 
 
     @Override
@@ -36,18 +43,42 @@ public class MapController implements Initializable
     {
         mapModel = new project.map.MapModel();
         initializeMap();
-        trainStationMap = mapModel.initializeTrainLines();
+        List<RailRoad> railRoads = RailRoadJsonParser.getRailRoadListFromJson("./src/main/resources/roads/railroads.json"); //TODO: sredi putanju
+
+        new RampWatcher(railRoads).start();
+
+        trainStationMap = mapModel.initializeRailRoads(railRoads);
+        streetRoads = mapModel.initializeStreetRoads();
+
     }
 
     @FXML
     void onStartBtnClicked(ActionEvent event)
     {
-        for (var trainStration : trainStationMap.entrySet())
-        {
-            trainStration.getValue().start();
-        }
         Train train = TrainJsonParser.getTrainPartsFromJson(trainStationMap, "nesto"); //TODO: sredi ovaj file path, vjerovatno sa file watcherom
         train.start();
+
+        //((RampField) Map.getField(13, 6)).setClosed(true);
+
+        int i = 0;
+        for (StreetRoad streetRoad : streetRoads)
+        {
+            if (i % 2 == 0)
+                new Car(streetRoad).start();
+            else
+                new Truck(streetRoad).start();
+            i++;
+        }
+    }
+
+
+    boolean closed = true;
+    @FXML
+    void onChangeRampStatusClicked(ActionEvent event)
+    {
+        ((Button)event.getSource()).setText((closed?"spustene":"podignute") + " rampe");
+        trainStationMap.entrySet().forEach(x -> x.getValue().getTrainRailRoads().forEach(y -> y.getRamps().forEach(z -> z.setClosed(closed))));
+        closed = !closed;
     }
 
 

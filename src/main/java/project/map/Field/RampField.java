@@ -2,19 +2,19 @@ package project.map.Field;
 
 public class RampField extends Field
 {
-    private Boolean isClosed;
+    private boolean isClosed;
 
     public RampField(int xPosition, int yPosition)
     {
         super(xPosition, yPosition);
     }
 
-    public Boolean getClosed()
+    public synchronized boolean isClosed()
     {
         return isClosed;
     }
 
-    public void setClosed(Boolean closed)
+    public synchronized void setClosed(boolean closed)
     {
         isClosed = closed;
     }

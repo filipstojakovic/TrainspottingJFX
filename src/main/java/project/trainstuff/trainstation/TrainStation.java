@@ -1,62 +1,25 @@
 package project.trainstuff.trainstation;
 
 import project.map.Field.Field;
+import project.trainstuff.RailRoad;
 import project.trainstuff.Train;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class TrainStation extends Thread
+public class TrainStation
 {
     private String stationName;
-    private List<TrainLine> trainLines;
+    private List<RailRoad> trainRailRoads;
     private List<Train> parkedTrains;
 
     private HashMap<String, Field> destinationFields;
 
     public TrainStation()
     {
-        setDaemon(true);
         parkedTrains = new ArrayList<>();
         destinationFields = new HashMap<>();
-    }
-
-    public TrainStation(String stationName, TrainLine trainLine)
-    {
-        this();
-        setName("THREAD => trainStation: " + stationName);
-        this.stationName = stationName;
-        addTrainLine(trainLine);
-    }
-
-    public TrainStation(String stationName, List<TrainLine> trainLines)
-    {
-        this();
-        setName("THREAD => trainStation: " + stationName);
-        this.stationName = stationName;
-        this.trainLines = trainLines;
-    }
-
-    @Override
-    public void run()
-    {
-        boolean flag = true;
-        while (flag)
-        {
-            for (var train : parkedTrains)
-            {
-                //if(stationName.equals(train.getDestination()))
-
-            }
-            try
-            {
-                Thread.sleep(2000);
-            } catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-        }
     }
 
     public Field getStartingFieldForDestination(String stationName)
@@ -71,11 +34,11 @@ public class TrainStation extends Thread
         destinationFields.put(destinationStationName, destinationField);
     }
 
-    public void addTrainLine(TrainLine trainLine)
+    public void addTrainLine(RailRoad trainLine)
     {
-        if (trainLines == null)
-            trainLines = new ArrayList<>();
-        trainLines.add(trainLine);
+        if (trainRailRoads == null)
+            trainRailRoads = new ArrayList<>();
+        trainRailRoads.add(trainLine);
     }
 
     public String getStationName()
@@ -85,18 +48,17 @@ public class TrainStation extends Thread
 
     public void setStationName(String stationName)
     {
-        setName("THREAD => trainStation: " + stationName);
         this.stationName = stationName;
     }
 
-    public List<TrainLine> getTrainLines()
+    public List<RailRoad> getTrainRailRoads()
     {
-        return trainLines;
+        return trainRailRoads;
     }
 
-    public void setTrainLines(List<TrainLine> trainLines)
+    public void setTrainRailRoads(List<RailRoad> trainRailRoads)
     {
-        this.trainLines = trainLines;
+        this.trainRailRoads = trainRailRoads;
     }
 
     public List<Train> getParkedTrains()

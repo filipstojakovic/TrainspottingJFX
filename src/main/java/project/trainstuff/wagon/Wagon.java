@@ -1,6 +1,6 @@
 package project.trainstuff.wagon;
 
-import project.streetvehicle.IMoveable;
+import project.streetstuff.streetvehicle.IMoveable;
 import project.trainstuff.TrainPart;
 
 public abstract class Wagon extends TrainPart implements IMoveable

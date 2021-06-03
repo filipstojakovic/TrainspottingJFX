@@ -4,6 +4,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.map.MapController">
    <BorderPane prefHeight="400.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0">
@@ -12,7 +13,12 @@
     </GridPane>
       </center>
       <right>
-         <Button mnemonicParsing="false" onAction="#onStartBtnClicked" text="Start" BorderPane.alignment="CENTER" />
+         <Pane prefHeight="400.0" prefWidth="158.0" BorderPane.alignment="CENTER">
+            <children>
+               <Button layoutX="53.0" layoutY="135.0" mnemonicParsing="false" onAction="#onStartBtnClicked" text="Start" />
+               <Button layoutX="36.0" layoutY="188.0" mnemonicParsing="false" onAction="#onChangeRampStatusClicked" text="podignute rampe" />
+            </children>
+         </Pane>
       </right>
    </BorderPane>
 </AnchorPane>

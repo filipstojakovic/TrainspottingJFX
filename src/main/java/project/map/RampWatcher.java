@@ -1,5 +1,9 @@
 package project.map;
 
+import javafx.application.Platform;
+import javafx.scene.control.Label;
+import project.Util.LabelUtils;
+import project.constants.ColorConstants;
 import project.map.Field.RampField;
 import project.trainstuff.RailRoad;
 
@@ -25,11 +29,20 @@ public class RampWatcher extends Thread
 
                 if (shouldCloseRampOnRailRoad(railRoad) || shouldCloseRampOnRailRoad(opositeRoad))
                 {
-                    railRoad.getRamps().forEach(x -> x.setClosed(true));
+                    railRoad.getRamps().forEach(x ->
+                    {
+                        Label rampLable = MapController.getGridCell(x.getxPosition(),x.getyPosition());
+                        Platform.runLater(()->LabelUtils.setLableBackgroundAndBorderColor(rampLable, ColorConstants.RED));
+                        x.setClosed(true);
+                    });
 
                 } else
                 {
-                    railRoad.getRamps().forEach(x -> x.setClosed(false));
+                    railRoad.getRamps().forEach(x -> {
+                        Label rampLable = MapController.getGridCell(x.getxPosition(),x.getyPosition());
+                        Platform.runLater(()->LabelUtils.setLableBackgroundAndBorderColor(rampLable, ColorConstants.BLACK));
+                        x.setClosed(false);
+                    });
                 }
             }
 
@@ -58,7 +71,7 @@ public class RampWatcher extends Thread
                 i--;
             }
             String cellText = MapController.getGridCell(field.getxPosition(), field.getyPosition()).getText();
-            if (!"".equals(cellText))
+            if (trainRoad.isOccupied() && !"".equals(cellText))
             {
                 shouldClose = true;
                 break;

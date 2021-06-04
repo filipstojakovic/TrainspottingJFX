@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.map.MapController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/16" fx:controller="project.map.MapController">
    <BorderPane prefHeight="400.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0">
       <center>
           <GridPane fx:id="gridPane" prefHeight="391.0" prefWidth="598.0" BorderPane.alignment="CENTER">
@@ -17,6 +17,7 @@
             <children>
                <Button layoutX="53.0" layoutY="135.0" mnemonicParsing="false" onAction="#onStartBtnClicked" text="Start" />
                <Button layoutX="36.0" layoutY="188.0" mnemonicParsing="false" onAction="#onChangeRampStatusClicked" text="podignute rampe" />
+               <Button layoutX="53.0" layoutY="252.0" mnemonicParsing="false" onAction="#openDialogClicked" text="Dialog" />
             </children>
          </Pane>
       </right>

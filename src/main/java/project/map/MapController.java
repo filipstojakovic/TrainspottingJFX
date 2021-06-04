@@ -2,10 +2,14 @@ package project.map;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import project.Util.LabelUtils;
 import project.constants.ColorConstants;
 import project.constants.FieldConstants;
@@ -19,6 +23,7 @@ import project.trainstuff.RailRoad;
 import project.trainstuff.Train;
 import project.trainstuff.trainstation.TrainStation;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +63,7 @@ public class MapController implements Initializable
         Train train = TrainJsonParser.getTrainPartsFromJson(trainStationMap, "nesto"); //TODO: sredi ovaj file path, vjerovatno sa file watcherom
         train.start();
 
+
         //((RampField) Map.getField(13, 6)).setClosed(true);
 
         int i = 0;
@@ -73,12 +79,31 @@ public class MapController implements Initializable
 
 
     boolean closed = true;
+
     @FXML
     void onChangeRampStatusClicked(ActionEvent event)
     {
-        ((Button)event.getSource()).setText((closed?"spustene":"podignute") + " rampe");
+        ((Button) event.getSource()).setText((closed ? "spustene" : "podignute") + " rampe");
         trainStationMap.entrySet().forEach(x -> x.getValue().getTrainRailRoads().forEach(y -> y.getRamps().forEach(z -> z.setClosed(closed))));
         closed = !closed;
+    }
+
+    @FXML
+    void openDialogClicked(ActionEvent event)
+    {
+        Parent root;
+        try {
+            root = FXMLLoader.load(MapController.class.getClassLoader().getResource("./DialogView.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Movement information");
+            stage.setScene(new Scene(root));
+            stage.show();
+            // Hide this current window (if this is what you want)
+            //((Node)(event.getSource())).getScene().getWindow().hide();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

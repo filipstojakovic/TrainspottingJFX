@@ -86,7 +86,7 @@ public class Train extends Thread
 
                 try
                 {
-                    Thread.sleep(300); // Train speed here
+                    Thread.sleep(100); // Train speed here
                 } catch (InterruptedException e)
                 {
                     e.printStackTrace();

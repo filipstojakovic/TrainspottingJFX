@@ -1,5 +1,7 @@
 package project.trainstuff;
 
+import java.util.Objects;
+
 public abstract class TrainPart
 {
     //ABSTRACT
@@ -32,5 +34,20 @@ public abstract class TrainPart
     public void setCurrentY(int currentY)
     {
         this.currentY = currentY;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TrainPart trainPart = (TrainPart) o;
+        return currentX == trainPart.currentX && currentY == trainPart.currentY;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(currentX, currentY);
     }
 }

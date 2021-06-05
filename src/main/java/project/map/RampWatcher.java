@@ -59,8 +59,9 @@ public class RampWatcher extends Thread
 
     private boolean shouldCloseRampOnRailRoad(RailRoad trainRoad)
     {
-        if(!trainRoad.isOccupied())
+        if(trainRoad.isRailRoadEmpty())
             return false;
+
         var railFields = trainRoad.getRoadFields();
         int i = 2;
         boolean shouldClose = false;
@@ -71,7 +72,7 @@ public class RampWatcher extends Thread
                 i--;
             }
             String cellText = MapController.getGridCell(field.getxPosition(), field.getyPosition()).getText();
-            if (trainRoad.isOccupied() && !"".equals(cellText))
+            if (!trainRoad.isRailRoadEmpty() && !"".equals(cellText))
             {
                 shouldClose = true;
                 break;

@@ -33,4 +33,14 @@ public class StartApp extends Application implements EventHandler<WindowEvent>
         Platform.exit();
         System.exit(0);
     }
+
+
+    //Note: NOT closing all stages for some reason
+    //@Override
+    //public void stop() throws Exception
+    //{
+    //    Platform.exit();
+    //    System.exit(0);
+    //    super.stop();
+    //}
 }

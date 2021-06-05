@@ -9,18 +9,28 @@ import project.map.MapController;
 import project.trainstuff.trainstation.TrainStation;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 
 public class Train extends Thread
 {
+    private final String trainName;
     private Queue<TrainStation> destinationStationsOrder;
     private List<TrainPart> trainPartList;
     private boolean isElectric; // if there is a Locomotive with Electric Engine
-    private final String THUNDER = "⚡";
+    private static final String THUNDER = "⚡";
+
+    public static int i = 0;
 
     public Train()
     {
+        trainName = String.valueOf(i++);
         setDaemon(true);
+    }
+
+    public String getTrainName()
+    {
+        return trainName;
     }
 
     @Override
@@ -36,8 +46,6 @@ public class Train extends Thread
 
         while (!destinationStationsOrder.isEmpty())
         {
-            if (currentRailRoad != null)
-                currentRailRoad.setOccupied(false);
             /*
             //        while (startField.isOccupied())
             //        {
@@ -53,15 +61,9 @@ public class Train extends Thread
             firstStation = secondStation;
             secondStation = destinationStationsOrder.poll();
 
-            TrainStation finalFirstStation = firstStation;
-            TrainStation finalSecondStation = secondStation;
-            currentRailRoad = firstStation.getTrainRailRoads().stream()
-                    .filter(trainLine1 -> finalFirstStation.getStationName().equals(trainLine1.getStartStationName())
-                            && finalSecondStation.getStationName().equals(trainLine1.getEndStationName()))
-                    .findFirst()
-                    .orElse(null);
+            currentRailRoad = getRailRoadBetweenStations(firstStation, secondStation);
+            currentRailRoad.addTrainOnRoad(this);
 
-            currentRailRoad.setOccupied(true);
             Field startField = currentRailRoad.getStartingField();
             int currentX = startField.getxPosition();
             int currentY = startField.getyPosition();
@@ -70,16 +72,10 @@ public class Train extends Thread
             int previousX = firstLineField.getxPosition();
             int previousY = firstLineField.getyPosition();
 
-            boolean flag = true;
             Field nextField = startField;
-            while (flag)
+            while (!(nextField instanceof TrainStationField))
             {
                 //while(field.isOccupied())
-                if (nextField instanceof TrainStationField)
-                {
-                    flag = false;
-                    continue;
-                }
 
                 shiftBackTrainPosition(currentX, currentY);
                 drawTrainOnMap();
@@ -98,9 +94,22 @@ public class Train extends Thread
                 currentX = nextField.getxPosition();
                 currentY = nextField.getyPosition();
             }
+
+            currentRailRoad.removeTrainFromRailRoad(this);
         }
         if (currentRailRoad != null)
-            currentRailRoad.setOccupied(false);
+            currentRailRoad.removeTrainFromRailRoad(this);
+    }
+
+    private RailRoad getRailRoadBetweenStations(final TrainStation firstStation,final TrainStation secondStation)
+    {
+        RailRoad currentRailRoad;
+        currentRailRoad = firstStation.getTrainRailRoads().stream()
+                .filter(trainLine1 -> firstStation.getStationName().equals(trainLine1.getStartStationName())
+                        && secondStation.getStationName().equals(trainLine1.getEndStationName()))
+                .findFirst()
+                .orElse(null);
+        return currentRailRoad;
     }
 
     private void shiftBackTrainPosition(int currentX, int currentY)
@@ -145,4 +154,20 @@ public class Train extends Thread
         this.trainPartList = trainPartList;
     }
 
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Train train = (Train) o;
+        return isElectric == train.isElectric
+                && trainPartList.equals(train.trainPartList);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(destinationStationsOrder, trainPartList, isElectric);
+    }
 }

@@ -1,9 +1,8 @@
 package project.map.Field;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class Field implements Serializable
+public abstract class Field
 {
     protected final int xPosition;
     protected final int yPosition;

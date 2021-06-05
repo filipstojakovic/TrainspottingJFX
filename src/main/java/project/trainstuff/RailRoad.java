@@ -3,18 +3,16 @@ package project.trainstuff;
 import project.map.Field.Field;
 import project.map.Field.RampField;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class RailRoad
 {
     private String startStationName;
     private String endStationName;
-    private boolean isOccupied = false;
     private List<Field> roadFields;
     private List<RampField> ramps;
+
+    private HashMap<String, Train> trainsOnRailRoad;
 
     public RailRoad()
     {
@@ -26,6 +24,17 @@ public class RailRoad
         this.endStationName = endStationName;
         this.roadFields = roadFields;
         this.ramps = ramps;
+        trainsOnRailRoad = new HashMap<>();
+    }
+
+    public synchronized void addTrainOnRoad(Train train)
+    {
+        trainsOnRailRoad.put(train.getTrainName(), train);
+    }
+
+    public synchronized void removeTrainFromRailRoad(Train train)
+    {
+        trainsOnRailRoad.remove(train.getTrainName());
     }
 
     //create reverse copy
@@ -41,6 +50,11 @@ public class RailRoad
         Collections.reverse(reverseRamps);
 
         return new RailRoad(start, end, reverseLine, reverseRamps);
+    }
+
+    public boolean isRailRoadEmpty()
+    {
+        return trainsOnRailRoad.isEmpty();
     }
 
     public Field getStartingField()
@@ -84,16 +98,6 @@ public class RailRoad
     public void setEndStationName(String endStationName)
     {
         this.endStationName = endStationName;
-    }
-
-    public boolean isOccupied()
-    {
-        return isOccupied;
-    }
-
-    public void setOccupied(boolean occupied)
-    {
-        isOccupied = occupied;
     }
 
     public List<RampField> getRamps()

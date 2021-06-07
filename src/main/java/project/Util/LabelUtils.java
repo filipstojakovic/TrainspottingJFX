@@ -42,6 +42,7 @@ public abstract class LabelUtils
     {
         label.setStyle("-fx-background-color: " + color + ";"
                 + "-fx-border-color: black;"
+                + "-fx-font-weight: bold"
         );
     }
 }

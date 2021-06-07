@@ -17,6 +17,7 @@ import project.jsonparsers.RailRoadJsonParser;
 import project.jsonparsers.TrainJsonParser;
 import project.map.Field.*;
 import project.streetstuff.StreetRoad;
+import project.streetstuff.StreetVehicleSpawner;
 import project.streetstuff.streetvehicle.Car;
 import project.streetstuff.streetvehicle.Truck;
 import project.trainstuff.RailRoad;
@@ -55,6 +56,17 @@ public class MapController implements Initializable
         trainStationMap = mapModel.initializeRailRoads(railRoads);
         streetRoads = mapModel.initializeStreetRoads();
 
+        StreetVehicleSpawner streetVehicleSpawner = null;
+        try
+        {
+            streetVehicleSpawner = new StreetVehicleSpawner(streetRoads);
+            streetVehicleSpawner.start();
+        } catch (IOException exception)
+        {
+            exception.printStackTrace();
+        }
+        //streetVehicleSpawner.start();
+
     }
 
     @FXML
@@ -92,7 +104,8 @@ public class MapController implements Initializable
     void openDialogClicked(ActionEvent event)
     {
         Parent root;
-        try {
+        try
+        {
             root = FXMLLoader.load(MapController.class.getClassLoader().getResource("./DialogView.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Movement information");
@@ -100,8 +113,8 @@ public class MapController implements Initializable
             stage.show();
             // Hide this current window (if this is what you want)
             //((Node)(event.getSource())).getScene().getWindow().hide();
-        }
-        catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
     }

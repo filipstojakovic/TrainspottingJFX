@@ -13,13 +13,13 @@ public class TrainStation
 {
     private String stationName;
     private List<RailRoad> trainRailRoads;
-    private List<Train> parkedTrains;
 
+    private HashMap<String,Train> parkedTrains;
     private HashMap<String, Field> destinationFields;
 
     public TrainStation()
     {
-        parkedTrains = new ArrayList<>();
+        parkedTrains = new HashMap<>();
         destinationFields = new HashMap<>();
     }
 
@@ -42,6 +42,16 @@ public class TrainStation
         trainRailRoads.add(trainLine);
     }
 
+    public void addParkedTrain(Train train)
+    {
+        parkedTrains.put(train.getTrainName(),train);
+    }
+
+    public void removeParkedTrain(Train train)
+    {
+        parkedTrains.remove(train.getTrainName());
+    }
+
     public String getStationName()
     {
         return stationName;
@@ -62,23 +72,13 @@ public class TrainStation
         this.trainRailRoads = trainRailRoads;
     }
 
-    public List<Train> getParkedTrains()
-    {
-        return parkedTrains;
-    }
-
-    public void setParkedTrains(List<Train> parkedTrains)
-    {
-        this.parkedTrains = parkedTrains;
-    }
-
     @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TrainStation that = (TrainStation) o;
-        return stationName.equals(that.stationName) && Objects.equals(trainRailRoads, that.trainRailRoads) && Objects.equals(parkedTrains, that.parkedTrains) && Objects.equals(destinationFields, that.destinationFields);
+        return stationName.equals(that.stationName) && trainRailRoads.equals(that.trainRailRoads) && parkedTrains.equals(that.parkedTrains) && destinationFields.equals(that.destinationFields);
     }
 
     @Override

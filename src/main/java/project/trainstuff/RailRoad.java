@@ -52,7 +52,7 @@ public class RailRoad
         return new RailRoad(start, end, reverseLine, reverseRamps);
     }
 
-    public boolean isRailRoadEmpty()
+    public synchronized boolean isRailRoadEmpty()
     {
         return trainsOnRailRoad.isEmpty();
     }

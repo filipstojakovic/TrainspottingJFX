@@ -22,6 +22,8 @@ public class Train extends Thread
     private boolean isElectric; // if there is a Locomotive with Electric Engine
     private static final String THUNDER = "⚡";
 
+    private static final Object LOCK = new Object();
+
     public static int i = 0;
 
     public Train()
@@ -36,7 +38,7 @@ public class Train extends Thread
     }
 
     @Override
-    public void run()
+    public synchronized void run()
     {
         //todo: check if trainPartList.size > 0 ??
         final TrainStation beginingStation = destinationStationsOrder.poll();
@@ -52,22 +54,8 @@ public class Train extends Thread
         RailRoad oppositeRailRoad = null;
         try
         {
-
-
             while (!destinationStationsOrder.isEmpty())
             {
-            /*
-            //        while (startField.isOccupied())
-            //        {
-            //            try
-            //            {
-            //                Thread.sleep(500);
-            //            } catch (InterruptedException e)
-            //            {
-            //                e.printStackTrace();
-            //            }
-            //        }
-            */
                 firstStation = secondStation;
                 secondStation = destinationStationsOrder.poll();
 
@@ -89,8 +77,11 @@ public class Train extends Thread
                 int previousY = stationField.getyPosition();
 
                 Label label = MapController.getGridCell(currentX, currentY);
-                while (!"".equals(label.getText()))
-                    Thread.sleep(300);
+                synchronized (LOCK)
+                {
+                    while (!"".equals(label.getText()))
+                        Thread.sleep(300);
+                }
 
                 firstStation.removeParkedTrain(this);
 

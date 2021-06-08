@@ -1,9 +1,9 @@
 {
   "stationOrder": [
-    "A",
-    "B",
+    "E",
     "C",
-    "E"
+    "B",
+    "A"
   ],
   "train": [
     {

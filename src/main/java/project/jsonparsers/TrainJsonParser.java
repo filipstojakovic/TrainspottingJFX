@@ -20,8 +20,7 @@ public class TrainJsonParser extends JsonParser
         Train train = new Train();
         try
         {
-            //JSONObject obj = (JSONObject) getJsonObjectFromFile(trainPath);
-            JSONObject obj = (JSONObject) getJsonObjectFromFile("./src/main/resources/trains/line1.json");
+            JSONObject obj = (JSONObject) getJsonObjectFromFile(trainPath);
 
             List<TrainPart> trainPartList = new ArrayList<>();
             JSONArray jsonArray = (JSONArray) obj.get("train");

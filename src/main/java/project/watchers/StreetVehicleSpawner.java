@@ -1,5 +1,6 @@
-package project.streetstuff;
+package project.watchers;
 
+import project.streetstuff.StreetRoad;
 import project.streetstuff.streetvehicle.Car;
 import project.streetstuff.streetvehicle.StreetVehicle;
 import project.streetstuff.streetvehicle.Truck;
@@ -115,6 +116,7 @@ public class StreetVehicleSpawner extends Thread
             }
         }).start();
     }
+
 
     private synchronized void readStreetVehiclePropertyFile(File file) throws IOException
     {

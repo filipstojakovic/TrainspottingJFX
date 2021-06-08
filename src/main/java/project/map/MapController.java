@@ -14,16 +14,14 @@ import project.Util.LabelUtils;
 import project.constants.ColorConstants;
 import project.constants.FieldConstants;
 import project.jsonparsers.RailRoadJsonParser;
-import project.jsonparsers.TrainJsonParser;
 import project.map.Field.*;
 import project.streetstuff.StreetRoad;
-import project.streetstuff.StreetVehicleSpawner;
-import project.streetstuff.streetvehicle.Car;
-import project.streetstuff.streetvehicle.Truck;
 import project.trainstuff.RailRoad;
-import project.trainstuff.Train;
 import project.trainstuff.trainstation.TrainStation;
+import project.watchers.StreetVehicleSpawner;
+import project.watchers.TrainSpawner;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -56,6 +54,23 @@ public class MapController implements Initializable
         trainStationMap = mapModel.initializeRailRoads(railRoads);
         streetRoads = mapModel.initializeStreetRoads();
 
+
+        //streetVehicleSpawner.start();
+    }
+
+    @FXML
+    void onStartBtnClicked(ActionEvent event)
+    {
+        TrainSpawner trainSpawner = new TrainSpawner("C:\\Users\\filip\\IdeaProjects\\TrainspottingJFX\\src\\main\\resources\\trains",trainStationMap);
+        try
+        {
+            trainSpawner.getAllTrainsFromDirectory();
+        } catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        trainSpawner.start();
+
         StreetVehicleSpawner streetVehicleSpawner = null;
         try
         {
@@ -65,33 +80,10 @@ public class MapController implements Initializable
         {
             exception.printStackTrace();
         }
-        //streetVehicleSpawner.start();
-
     }
 
-    @FXML
-    void onStartBtnClicked(ActionEvent event)
-    {
-        Train train = TrainJsonParser.getTrainPartsFromJson(trainStationMap, "nesto"); //TODO: sredi ovaj file path, vjerovatno sa file watcherom
-        train.start();
-
-
-        //((RampField) Map.getField(13, 6)).setClosed(true);
-
-        int i = 0;
-        for (StreetRoad streetRoad : streetRoads)
-        {
-            if (i % 2 == 0)
-                new Car(streetRoad).start();
-            else
-                new Truck(streetRoad).start();
-            i++;
-        }
-    }
-
-
+    //TODO: delete me
     boolean closed = true;
-
     @FXML
     void onChangeRampStatusClicked(ActionEvent event)
     {

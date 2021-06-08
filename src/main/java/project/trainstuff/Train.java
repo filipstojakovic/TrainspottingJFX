@@ -76,12 +76,12 @@ public class Train extends Thread
                 int previousX = stationField.getxPosition();
                 int previousY = stationField.getyPosition();
 
-                Label label = MapController.getGridCell(currentX, currentY);
-                synchronized (LOCK)
-                {
-                    while (!"".equals(label.getText()))
-                        Thread.sleep(300);
-                }
+                //Label label = MapController.getGridCell(currentX, currentY);
+                //synchronized (LOCK)
+                //{
+                //    while (!"".equals(label.getText()))
+                //        Thread.sleep(300);
+                //}
 
                 firstStation.removeParkedTrain(this);
 
@@ -89,7 +89,11 @@ public class Train extends Thread
                 Field nextField = railRoadField;
                 while (!(nextField instanceof TrainStationField))
                 {
-                    //while(field.isOccupied())
+                    Label label = MapController.getGridCell(nextField.getxPosition(), nextField.getyPosition());
+                    while (!"".equals(label.getText()))
+                    {
+                        Thread.sleep(300);
+                    }
                     shiftBackTrainPosition(currentX, currentY);
                     drawTrainOnMap();
                     Thread.sleep(TRAIN_MOVE_SPEED); // Train speed here

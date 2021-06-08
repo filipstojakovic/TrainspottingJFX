@@ -1,4 +1,4 @@
-package project.watchers;
+package project.spawners_and_watchers;
 
 import project.jsonparsers.TrainJsonParser;
 import project.trainstuff.Train;
@@ -53,10 +53,12 @@ public class TrainSpawner extends Thread
                     System.out.println(kind.name() + ": " + fileName);
                     if (fileName.toString().trim().endsWith(".json") && kind.equals(ENTRY_CREATE))
                     {
+                        Thread.sleep(300);
                         Path filePath = dir.resolve(fileName);
                         Train train = getTrainFromFile(filePath);
-                        train.start();
-                        break;
+                        if (train != null)
+                            train.start();
+
                     }
                 }
 
@@ -67,7 +69,7 @@ public class TrainSpawner extends Thread
                 }
             }
 
-        } catch (IOException ex)
+        } catch (IOException | InterruptedException ex)
         {
             System.err.println(ex);
         }
@@ -77,24 +79,24 @@ public class TrainSpawner extends Thread
     {
         File[] files = watchDirectoryPath.toFile().listFiles();
         //If this pathname does not denote a directory, then listFiles() returns null.
-        if(files==null)
+        if (files == null)
             throw new FileNotFoundException();
 
-        new Thread(()->
+        new Thread(() ->
         {
             for (File file : files)
             {
                 if (file.isFile())
                 {
-                    Train train = getTrainFromFile(file.toPath());
-                    train.start();
                     try
                     {
-                        Thread.sleep(10);
+                        Thread.sleep(100);
                     } catch (InterruptedException e)
                     {
                         e.printStackTrace();
                     }
+                    Train train = getTrainFromFile(file.toPath());
+                    train.start();
                 }
             }
         }).start();

@@ -15,7 +15,7 @@ import java.util.*;
 
 public class TrainJsonParser extends JsonParser
 {
-    public static Train getTrainPartsFromJson(HashMap<String, TrainStation> trainstationHashMap, String trainPath)
+    public static Train getTrainPartsFromJson(final HashMap<String, TrainStation> trainstationHashMap, String trainPath)
     {
         Train train = new Train();
         try
@@ -41,6 +41,7 @@ public class TrainJsonParser extends JsonParser
         } catch (Exception ex)
         {
             ex.printStackTrace();
+            train = null;
         }
 
         return train;

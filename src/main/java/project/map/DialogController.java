@@ -15,15 +15,25 @@ public class DialogController implements Initializable
     @FXML
     private TextArea textArea;
 
+    boolean isDialogActive;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
+        isDialogActive=true;
+    }
+
+    void close()
+    {
+        isDialogActive = false;
     }
 
     @FXML
     void closeBtnClicked(ActionEvent event)
     {
+        System.out.println("Close button clicked");
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        close();
         stage.close();
     }
 

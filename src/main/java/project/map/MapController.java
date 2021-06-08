@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -18,8 +17,8 @@ import project.map.Field.*;
 import project.streetstuff.StreetRoad;
 import project.trainstuff.RailRoad;
 import project.trainstuff.trainstation.TrainStation;
-import project.watchers.StreetVehicleSpawner;
-import project.watchers.TrainSpawner;
+import project.spawners_and_watchers.StreetVehicleSpawner;
+import project.spawners_and_watchers.TrainSpawner;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -61,7 +60,7 @@ public class MapController implements Initializable
     @FXML
     void onStartBtnClicked(ActionEvent event)
     {
-        TrainSpawner trainSpawner = new TrainSpawner("C:\\Users\\filip\\IdeaProjects\\TrainspottingJFX\\src\\main\\resources\\trains",trainStationMap);
+        TrainSpawner trainSpawner = new TrainSpawner("C:\\Users\\filip\\IdeaProjects\\TrainspottingJFX\\src\\main\\resources\\trains", trainStationMap);
         try
         {
             trainSpawner.getAllTrainsFromDirectory();
@@ -82,27 +81,35 @@ public class MapController implements Initializable
         }
     }
 
-    //TODO: delete me
-    boolean closed = true;
-    @FXML
-    void onChangeRampStatusClicked(ActionEvent event)
-    {
-        ((Button) event.getSource()).setText((closed ? "spustene" : "podignute") + " rampe");
-        trainStationMap.entrySet().forEach(x -> x.getValue().getTrainRailRoads().forEach(y -> y.getRamps().forEach(z -> z.setClosed(closed))));
-        closed = !closed;
-    }
+
+    private Stage dialogStage;
+    private DialogController dialogController;
 
     @FXML
     void openDialogClicked(ActionEvent event)
     {
-        Parent root;
         try
         {
-            root = FXMLLoader.load(MapController.class.getClassLoader().getResource("./DialogView.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Movement information");
-            stage.setScene(new Scene(root));
-            stage.show();
+            if (dialogStage != null) //close last if its open
+            {
+                System.out.println("Closed becouse reopened!");
+                dialogController.close();
+                dialogStage.close();
+            }
+
+            FXMLLoader loader = new FXMLLoader(MapController.class.getClassLoader().getResource("./DialogView.fxml"));
+            Parent root = (Parent) loader.load();
+
+            dialogStage = new Stage();
+            dialogController = loader.getController();
+            dialogStage.setOnCloseRequest(x ->
+            {
+                System.out.println("Closed, on \"X\" clicked");
+                dialogController.close();
+            });
+            dialogStage.setTitle("Movement information");
+            dialogStage.setScene(new Scene(root));
+            dialogStage.show();
             // Hide this current window (if this is what you want)
             //((Node)(event.getSource())).getScene().getWindow().hide();
         } catch (IOException e)

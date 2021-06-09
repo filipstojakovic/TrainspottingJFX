@@ -12,13 +12,13 @@ import javafx.stage.Stage;
 import project.Util.LabelUtils;
 import project.constants.ColorConstants;
 import project.constants.FieldConstants;
-import project.jsonparsers.RailRoadJsonParser;
 import project.map.Field.*;
-import project.streetstuff.StreetRoad;
-import project.trainstuff.RailRoad;
-import project.trainstuff.trainstation.TrainStation;
-import project.spawners_and_watchers.StreetVehicleSpawner;
-import project.spawners_and_watchers.TrainSpawner;
+import project.movementdialog.MovementDialogController;
+import project.spawners.StreetVehicleSpawner;
+import project.spawners.TrainSpawner;
+import project.vehiclestuff.streetstuff.StreetRoad;
+import project.vehiclestuff.trainstuff.RailRoad;
+import project.vehiclestuff.trainstuff.trainstation.TrainStation;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -40,27 +40,28 @@ public class MapController implements Initializable
     private HashMap<String, TrainStation> trainStationMap;
     private List<StreetRoad> streetRoads;
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
-        mapModel = new project.map.MapModel();
-        initializeMap();
-        List<RailRoad> railRoads = RailRoadJsonParser.getRailRoadListFromJson("./src/main/resources/roads/railroads.json"); //TODO: sredi putanju
-
-        new RampWatcher(railRoads).start();
-
-        trainStationMap = mapModel.initializeRailRoads(railRoads);
-        streetRoads = mapModel.initializeStreetRoads();
-
-
-        //streetVehicleSpawner.start();
+        mapModel = new MapModel();
+        try
+        {
+            initializeMap();
+            List<RailRoad> railRoads = mapModel.initRailRoads();
+            new RampWatcher(railRoads).start();
+            trainStationMap = mapModel.initializeTrainStationMap(railRoads);
+            streetRoads = mapModel.initializeStreetRoads();
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+            System.exit(1);
+        }
     }
 
     @FXML
     void onStartBtnClicked(ActionEvent event)
     {
-        TrainSpawner trainSpawner = new TrainSpawner("C:\\Users\\filip\\IdeaProjects\\TrainspottingJFX\\src\\main\\resources\\trains", trainStationMap);
+        TrainSpawner trainSpawner = mapModel.initTrainSpawner(trainStationMap);
         try
         {
             trainSpawner.getAllTrainsFromDirectory();
@@ -83,7 +84,7 @@ public class MapController implements Initializable
 
 
     private Stage dialogStage;
-    private DialogController dialogController;
+    private MovementDialogController movementDialogController;
 
     @FXML
     void openDialogClicked(ActionEvent event)
@@ -93,19 +94,19 @@ public class MapController implements Initializable
             if (dialogStage != null) //close last if its open
             {
                 System.out.println("Closed becouse reopened!");
-                dialogController.close();
+                movementDialogController.close();
                 dialogStage.close();
             }
 
-            FXMLLoader loader = new FXMLLoader(MapController.class.getClassLoader().getResource("./DialogView.fxml"));
+            FXMLLoader loader = new FXMLLoader(MapController.class.getClassLoader().getResource("./fxmls/DialogView.fxml"));
             Parent root = (Parent) loader.load();
 
             dialogStage = new Stage();
-            dialogController = loader.getController();
+            movementDialogController = loader.getController();
             dialogStage.setOnCloseRequest(x ->
             {
                 System.out.println("Closed, on \"X\" clicked");
-                dialogController.close();
+                movementDialogController.close();
             });
             dialogStage.setTitle("Movement information");
             dialogStage.setScene(new Scene(root));
@@ -118,26 +119,19 @@ public class MapController implements Initializable
         }
     }
 
-
-    public static Label getGridCell(int x, int y)
+    public synchronized static Label getGridCell(int x, int y)
     {
         if (x < DIM && x >= 0 && y < DIM && y >= 0)
             return (Label) mapPane.getChildren().get(y * DIM + x);
-        return new Label();
+
+        return new Label();     //TODO: change to null
     }
 
-    private void initializeMap()
+    private void initializeMap() throws Exception
     {
         mapPane = gridPane;
-        List<List<String>> mapValues = new ArrayList<>();
-        try
-        {
-            mapValues = mapModel.getMap();
+        List<List<String>> mapValues = mapModel.getMap();
 
-        } catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
         Map.mapFields = new ArrayList<>();
         int i = 0;
         for (List<String> rowList : mapValues)

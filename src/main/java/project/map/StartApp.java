@@ -9,22 +9,28 @@ import javafx.stage.WindowEvent;
 
 public class StartApp extends Application implements EventHandler<WindowEvent>
 {
-    private Stage primaryStage;
+
     public static void main(String[] args)
     {
         launch(args);
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception
+    public void start(Stage primaryStage)
     {
-        this.primaryStage = primaryStage;
-        javafx.scene.Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("MapView.fxml"));
-        primaryStage.setTitle("Trainspotting");
-        primaryStage.setScene(new javafx.scene.Scene(root));
-        primaryStage.setMaximized(true);
-        primaryStage.setOnCloseRequest(this); // call public void handle()
-        primaryStage.show();
+        try
+        {
+            javafx.scene.Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("./fxmls/MapView.fxml"));
+            primaryStage.setTitle("Trainspotting");
+            primaryStage.setScene(new javafx.scene.Scene(root));
+            primaryStage.setMaximized(true);
+            primaryStage.setOnCloseRequest(this); // call public void handle()
+            primaryStage.show();
+
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     @Override

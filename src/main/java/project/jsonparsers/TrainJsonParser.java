@@ -2,14 +2,14 @@ package project.jsonparsers;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import project.trainstuff.Train;
-import project.trainstuff.TrainPart;
-import project.trainstuff.locomotive.CargoLocomotive;
-import project.trainstuff.locomotive.ManeuverLocomotive;
-import project.trainstuff.locomotive.PassengerLocomotive;
-import project.trainstuff.locomotive.UniversalLocomotive;
-import project.trainstuff.trainstation.TrainStation;
-import project.trainstuff.wagon.*;
+import project.vehiclestuff.trainstuff.Train;
+import project.vehiclestuff.trainstuff.TrainPart;
+import project.vehiclestuff.trainstuff.locomotive.CargoLocomotive;
+import project.vehiclestuff.trainstuff.locomotive.ManeuverLocomotive;
+import project.vehiclestuff.trainstuff.locomotive.PassengerLocomotive;
+import project.vehiclestuff.trainstuff.locomotive.UniversalLocomotive;
+import project.vehiclestuff.trainstuff.trainstation.TrainStation;
+import project.vehiclestuff.trainstuff.wagon.*;
 
 import java.util.*;
 

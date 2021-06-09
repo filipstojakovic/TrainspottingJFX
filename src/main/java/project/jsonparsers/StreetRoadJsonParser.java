@@ -3,7 +3,7 @@ package project.jsonparsers;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import project.map.Map;
-import project.streetstuff.StreetRoad;
+import project.vehiclestuff.streetstuff.StreetRoad;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +18,8 @@ public abstract class StreetRoadJsonParser extends JsonParser
             JSONArray jsonArray = (JSONArray) getJsonObjectFromFile(path);
             for (Object obj : jsonArray)
             {
-                JSONArray streetJsonArray = (JSONArray) obj;
-                StreetRoad streetRoad = getStreetRoad(streetJsonArray);
+                JSONObject streetJson = (JSONObject) obj;
+                StreetRoad streetRoad = getStreetRoad(streetJson);
                 streetRoads.add(streetRoad);
             }
 
@@ -31,9 +31,12 @@ public abstract class StreetRoadJsonParser extends JsonParser
         return streetRoads;
     }
 
-    private static StreetRoad getStreetRoad(JSONArray streetJsonArray)
+    private static StreetRoad getStreetRoad(JSONObject streetJson)
     {
         StreetRoad streetRoad = new StreetRoad();
+        String streetName = (String) streetJson.get("name");
+        streetRoad.setName(streetName);
+        JSONArray streetJsonArray = (JSONArray) streetJson.get("line");
         for (Object obj : streetJsonArray)
         {
             JSONObject streetFieldJson = (JSONObject) obj;

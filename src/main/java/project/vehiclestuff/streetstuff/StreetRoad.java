@@ -1,0 +1,49 @@
+package project.vehiclestuff.streetstuff;
+
+import project.map.Field.Field;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class StreetRoad
+{
+    private String name;
+    private int speed;
+
+    private final List<Field> streetFields;
+
+    public StreetRoad()
+    {
+        streetFields = new ArrayList<>();
+    }
+
+    public void addStreetField(Field field)
+    {
+        streetFields.add(field);
+    }
+
+    public List<Field> getStreetFields()
+    {
+        return streetFields;
+    }
+
+    public void setSpeed(int speed)
+    {
+        this.speed = speed;
+    }
+
+    public int getSpeed()
+    {
+        return speed;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+}

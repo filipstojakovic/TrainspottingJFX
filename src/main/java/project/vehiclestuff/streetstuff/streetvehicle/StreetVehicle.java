@@ -53,8 +53,11 @@ public abstract class StreetVehicle extends Thread implements IMoveable
                 firstX = field.getxPosition();
                 firstY = field.getyPosition();
 
-                String cellText = MapController.getGridCell(firstX, firstY).getText();
+                var label = MapController.getGridCell(firstX, firstY);
+                if (label == null)
+                    continue;
 
+                String cellText = label.getText();
                 if (!"".equals(cellText))
                 {
                     drawVehicle(secondX, secondY);
@@ -92,11 +95,21 @@ public abstract class StreetVehicle extends Thread implements IMoveable
 
     private void drawVehicle(final int finalX, final int finalY)
     {
-        Platform.runLater(() -> MapController.getGridCell(finalX, finalY).setText(getStreetVehicleName()));
+        Platform.runLater(() ->
+        {
+            var label = MapController.getGridCell(finalX, finalY);
+            if (label != null)
+                label.setText(getStreetVehicleName());
+        });
     }
 
     private void removeVehicle(final int finalX, final int finalY)
     {
-        Platform.runLater(() -> MapController.getGridCell(finalX, finalY).setText(""));
+        Platform.runLater(() ->
+        {
+            var label = MapController.getGridCell(finalX, finalY);
+            if (label != null)
+                label.setText("");
+        });
     }
 }

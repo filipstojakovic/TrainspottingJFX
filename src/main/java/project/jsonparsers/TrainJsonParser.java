@@ -78,8 +78,8 @@ public class TrainJsonParser extends JsonParser
             return new CargoWagon();
         else if (PassengerBadWagon.class.getSimpleName().equals(className))
             return new PassengerBadWagon();
-        else if (PassengerRestoranWagon.class.getSimpleName().equals(className))
-            return new PassengerRestoranWagon();
+        else if (PassengerRestaurantWagon.class.getSimpleName().equals(className))
+            return new PassengerRestaurantWagon();
         else if (PassengerSeatWagon.class.getSimpleName().equals(className))
             return new PassengerSeatWagon();
         else if (PassengerSleepWagon.class.getSimpleName().equals(className))

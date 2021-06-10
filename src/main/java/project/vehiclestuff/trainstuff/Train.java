@@ -152,7 +152,12 @@ public class Train extends Thread implements IMoveable
             TrainPart trainPart = trainPartList.get(i);
             int partx = trainPart.getCurrentX();
             int party = trainPart.getCurrentY();
-            Platform.runLater(() -> MapController.getGridCell(partx, party).setText(""));
+            Platform.runLater(() ->
+            {
+                var label = MapController.getGridCell(partx, party);
+                if (label != null)
+                    label.setText("");
+            });
             TrainPart trainPartBefore = trainPartList.get(i - 1);
             trainPart.setPosition(trainPartBefore.getCurrentX(), trainPartBefore.getCurrentY());
         }
@@ -161,11 +166,14 @@ public class Train extends Thread implements IMoveable
 
     private void drawTrainOnMap()
     {
-        for (var part : trainPartList)
+        for (var trainPart : trainPartList)
         {
             Platform.runLater(() ->
-                    MapController.getGridCell(part.getCurrentX(), part.getCurrentY())
-                            .setText(part.getPartName()));
+            {
+                var label = MapController.getGridCell(trainPart.getCurrentX(), trainPart.getCurrentY());
+                if (label != null)
+                    label.setText(trainPart.getPartName());
+            });
         }
     }
 

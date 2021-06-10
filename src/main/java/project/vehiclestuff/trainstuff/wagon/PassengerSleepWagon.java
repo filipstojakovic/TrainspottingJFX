@@ -2,7 +2,7 @@ package project.vehiclestuff.trainstuff.wagon;
 
 public class PassengerSleepWagon extends PassengerWagon
 {
-    private final String NAME = "PSLW";
+    private final String NAME = "PSS";
 
     public PassengerSleepWagon()
     {

@@ -23,7 +23,6 @@ public class StartApp extends Application implements EventHandler<WindowEvent>
             javafx.scene.Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("./fxmls/MapView.fxml"));
             primaryStage.setTitle("Trainspotting");
             primaryStage.setScene(new javafx.scene.Scene(root));
-            primaryStage.setResizable(false);
             primaryStage.setOnCloseRequest(this); // call public void handle()
             primaryStage.show();
 

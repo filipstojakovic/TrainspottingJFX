@@ -11,6 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import project.Util.LabelUtils;
 import project.constants.ColorConstants;
+import project.constants.Constants;
 import project.constants.FieldConstants;
 import project.map.Field.*;
 import project.spawners.TrainSpawner;
@@ -33,6 +34,8 @@ public class MapController implements Initializable
 {
     public MapModel mapModel;
     @FXML
+    private Label infoLabel;
+    @FXML
     public GridPane gridPane;
     public static GridPane mapPane;
 
@@ -44,6 +47,7 @@ public class MapController implements Initializable
     {
         try
         {
+            infoLabel.setText(Constants.INFO_TEXT);
             mapModel = new MapModel();
             initializeMap();
             List<RailRoad> railRoads = mapModel.initRailRoads();
@@ -66,7 +70,7 @@ public class MapController implements Initializable
             TrainSpawner trainSpawner = mapModel.initTrainSpawner(trainStationMap);
             trainSpawner.getAllTrainsFromDirectory();
             trainSpawner.start();
-        } catch (FileNotFoundException | URISyntaxException e)
+        } catch (URISyntaxException | FileNotFoundException e)
         {
             e.printStackTrace();
         }
@@ -116,7 +120,7 @@ public class MapController implements Initializable
         if (x < DIM && x >= 0 && y < DIM && y >= 0)
             return (Label) mapPane.getChildren().get(y * DIM + x);
 
-        return new Label();     //TODO: change to null
+        return null;
     }
 
     private void initializeMap() throws Exception

@@ -1,12 +1,12 @@
 package project.vehiclestuff.trainstuff.wagon;
 
-public class PassengerRestoranWagon extends PassengerWagon
+public class PassengerRestaurantWagon extends PassengerWagon
 {
     private final String NAME = "PRW";
 
     public String description;
 
-    public PassengerRestoranWagon()
+    public PassengerRestaurantWagon()
     {
     }
 

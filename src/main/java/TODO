@@ -3,7 +3,12 @@
 TODO: use file separator File.separator
 TODO: vise puta start kad se klikne bilo koje dugme nesto uraditi
 TODO: label if -1, -1 nesto drugacije uraditi
-TODO: use logger
+TODO: use Logger
+TODO: validacija vozova
+TODO: polja za elektricno voz
+TODO: movement dialog prozor
+TODO: create WatcherUtil
 
 Pitanja:
-Da li moramo paziti kada se start klikne vise puta?
+1) Da li moramo paziti kada se start klikne vise puta?
+2) Sta treba ispisivati u dialogu za kretanje?

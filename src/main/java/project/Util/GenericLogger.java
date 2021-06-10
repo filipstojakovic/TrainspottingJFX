@@ -29,7 +29,7 @@ public abstract class GenericLogger
         {
             try
             {
-                String path = "." + File.separator + "logs" + File.separator;
+                String path = "." + File.separator + "res" + File.separator + "logs" + File.separator;
                 Utils.createFolderIfNotExists(path);
                 Handler handler = new FileHandler(path + C.getName() + LocalDateTime.now().toLocalTime().toString().replace(':', '_') + ".log");
                 logger.addHandler(handler);

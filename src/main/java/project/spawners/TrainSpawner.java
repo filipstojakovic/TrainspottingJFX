@@ -8,18 +8,23 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 
 public class TrainSpawner extends Thread
 {
-    private final Path watchDirectoryPath;
+    public static final int MINOR_DELAY = 200;
+    private final File watchDirectoryFile;
     private final HashMap<String, TrainStation> trainStationMap;
+    private final List<String> visitedFileNames;
 
     public TrainSpawner(String directoryPath, HashMap<String, TrainStation> trainStationMap)
     {
-        watchDirectoryPath = (new File(directoryPath)).toPath();
+        visitedFileNames = new ArrayList<>();
+        watchDirectoryFile = new File(directoryPath);
         this.trainStationMap = trainStationMap;
     }
 
@@ -29,10 +34,9 @@ public class TrainSpawner extends Thread
         try
         {
             WatchService watcher = FileSystems.getDefault().newWatchService();
-            File directory = watchDirectoryPath.toFile();
-            Path dir = directory.toPath();
+            Path dir = watchDirectoryFile.toPath();
             dir.register(watcher, ENTRY_CREATE);
-            System.out.println("Watch Service registered for dir: " + directory.getAbsolutePath());
+            //System.out.println("Watch Service registered for dir: " + dir);
 
             while (true)
             {
@@ -51,14 +55,16 @@ public class TrainSpawner extends Thread
                     WatchEvent<Path> ev = (WatchEvent<Path>) event;
                     Path fileName = ev.context();
                     System.out.println(kind.name() + ": " + fileName);
-                    if (fileName.toString().trim().endsWith(".json") && kind.equals(ENTRY_CREATE))
+                    if (fileName.toString().trim().endsWith(".json")
+                            && !visitedFileNames.contains(fileName.toString())
+                            && kind.equals(ENTRY_CREATE))
                     {
-                        Thread.sleep(300);
+                        Thread.sleep(MINOR_DELAY);
+                        visitedFileNames.add(fileName.toString());
                         Path filePath = dir.resolve(fileName);
                         Train train = getTrainFromFile(filePath);
                         if (train != null)
                             train.start();
-
                     }
                 }
 
@@ -77,7 +83,7 @@ public class TrainSpawner extends Thread
 
     public void getAllTrainsFromDirectory() throws FileNotFoundException
     {
-        File[] files = watchDirectoryPath.toFile().listFiles();
+        File[] files = watchDirectoryFile.listFiles();
         //If this pathname does not denote a directory, then listFiles() returns null.
         if (files == null)
             throw new FileNotFoundException();
@@ -86,17 +92,18 @@ public class TrainSpawner extends Thread
         {
             for (File file : files)
             {
-                if (file.isFile())
+                try
                 {
-                    try
+                    if (file.isFile())
                     {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e)
-                    {
-                        e.printStackTrace();
+                        Thread.sleep(MINOR_DELAY);
+                        Train train = getTrainFromFile(file.toPath());
+                        train.start();
+
                     }
-                    Train train = getTrainFromFile(file.toPath());
-                    train.start();
+                } catch (InterruptedException e)
+                {
+                    e.printStackTrace();
                 }
             }
         }).start();

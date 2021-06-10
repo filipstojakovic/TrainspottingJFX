@@ -13,15 +13,14 @@ import project.Util.LabelUtils;
 import project.constants.ColorConstants;
 import project.constants.FieldConstants;
 import project.map.Field.*;
-import project.movementdialog.MovementDialogController;
-import project.spawners.StreetVehicleSpawner;
 import project.spawners.TrainSpawner;
-import project.vehiclestuff.streetstuff.StreetRoad;
+import project.vehiclestuff.streetstuff.Street;
 import project.vehiclestuff.trainstuff.RailRoad;
 import project.vehiclestuff.trainstuff.trainstation.TrainStation;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,19 +37,20 @@ public class MapController implements Initializable
     public static GridPane mapPane;
 
     private HashMap<String, TrainStation> trainStationMap;
-    private List<StreetRoad> streetRoads;
+    private List<Street> streets;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
-        mapModel = new MapModel();
         try
         {
+            mapModel = new MapModel();
             initializeMap();
             List<RailRoad> railRoads = mapModel.initRailRoads();
             new RampWatcher(railRoads).start();
             trainStationMap = mapModel.initializeTrainStationMap(railRoads);
-            streetRoads = mapModel.initializeStreetRoads();
+            streets = mapModel.initializeStreets();
+
         } catch (Exception ex)
         {
             ex.printStackTrace();
@@ -61,56 +61,48 @@ public class MapController implements Initializable
     @FXML
     void onStartBtnClicked(ActionEvent event)
     {
-        TrainSpawner trainSpawner = mapModel.initTrainSpawner(trainStationMap);
         try
         {
+            TrainSpawner trainSpawner = mapModel.initTrainSpawner(trainStationMap);
             trainSpawner.getAllTrainsFromDirectory();
-        } catch (FileNotFoundException e)
+            trainSpawner.start();
+        } catch (FileNotFoundException | URISyntaxException e)
         {
             e.printStackTrace();
         }
-        trainSpawner.start();
 
-        StreetVehicleSpawner streetVehicleSpawner = null;
-        try
-        {
-            streetVehicleSpawner = new StreetVehicleSpawner(streetRoads);
-            streetVehicleSpawner.start();
-        } catch (IOException exception)
-        {
-            exception.printStackTrace();
-        }
+        //StreetVehicleSpawner streetVehicleSpawner = null;
+        //try
+        //{
+        //    streetVehicleSpawner = new StreetVehicleSpawner(streets);
+        //    streetVehicleSpawner.start();
+        //} catch (IOException exception)
+        //{
+        //    exception.printStackTrace();
+        //}
     }
 
 
-    private Stage dialogStage;
-    private MovementDialogController movementDialogController;
+    private Stage movementDialogStage;
 
     @FXML
     void openDialogClicked(ActionEvent event)
     {
         try
         {
-            if (dialogStage != null) //close last if its open
+            if (movementDialogStage != null) //close last if its open
             {
                 System.out.println("Closed becouse reopened!");
-                movementDialogController.close();
-                dialogStage.close();
+                movementDialogStage.close();
             }
 
             FXMLLoader loader = new FXMLLoader(MapController.class.getClassLoader().getResource("./fxmls/DialogView.fxml"));
             Parent root = (Parent) loader.load();
 
-            dialogStage = new Stage();
-            movementDialogController = loader.getController();
-            dialogStage.setOnCloseRequest(x ->
-            {
-                System.out.println("Closed, on \"X\" clicked");
-                movementDialogController.close();
-            });
-            dialogStage.setTitle("Movement information");
-            dialogStage.setScene(new Scene(root));
-            dialogStage.show();
+            movementDialogStage = new Stage();
+            movementDialogStage.setTitle("Movement information");
+            movementDialogStage.setScene(new Scene(root));
+            movementDialogStage.show();
             // Hide this current window (if this is what you want)
             //((Node)(event.getSource())).getScene().getWindow().hide();
         } catch (IOException e)
@@ -140,7 +132,7 @@ public class MapController implements Initializable
             List<Field> rowFields = new ArrayList<>();
             for (String fieldValue : rowList)
             {
-                Label fieldLabl = LabelUtils.getLabel();
+                Label fieldLabl = LabelUtils.createLabel();
                 switch (fieldValue)
                 {
                     case FieldConstants.RAMP:

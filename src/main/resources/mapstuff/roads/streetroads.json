@@ -1,6 +1,6 @@
 [
   {
-    "name": "L1",
+    "name": "left_street",
     "line": [
       {
         "x": 0,
@@ -70,7 +70,7 @@
     ]
   },
   {
-    "name": "L2",
+    "name": "left_street",
     "line": [
       {
         "x": 8,
@@ -148,7 +148,7 @@
     ]
   },
   {
-    "name": "M1",
+    "name": "middle_street",
     "line": [
       {
         "x": 13,
@@ -274,7 +274,7 @@
     ]
   },
   {
-    "name": "M2",
+    "name": "middle_street",
     "line": [
       {
         "x": 14,
@@ -400,7 +400,7 @@
     ]
   },
   {
-    "name": "R1",
+    "name": "right_street",
     "line": [
       {
         "x": 29,
@@ -478,7 +478,7 @@
     ]
   },
   {
-    "name": "R2",
+    "name": "right_street",
     "line": [
       {
         "x": 22,

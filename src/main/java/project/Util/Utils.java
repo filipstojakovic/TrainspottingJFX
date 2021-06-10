@@ -1,14 +1,13 @@
 package project.Util;
 
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Properties;
 
 public abstract class Utils
 {
-    public static final Object LOCK = new Object();
 
     // failed if files have whitespaces or special characters
     public static File getFileFromResources(String name) throws URISyntaxException
@@ -16,7 +15,7 @@ public abstract class Utils
         URL resource = Utils.class.getClassLoader().getResource(name);
         if (resource == null)
         {
-            throw new IllegalArgumentException("file not found!");
+            throw new IllegalArgumentException("File not found!");
         } else
         {
             //return new File(resource.getFile());
@@ -24,26 +23,23 @@ public abstract class Utils
         }
     }
 
-    public static void writeToFile(String text, String filePath, boolean apppend)
-    {
-        synchronized (LOCK)
-        {
-            try (FileWriter fw = new FileWriter(filePath, apppend))
-            {
-                fw.write(text);
-            } catch (Exception ex)
-            {
-                ex.printStackTrace();
-            }
-        }
-    }
 
     public static void createFolderIfNotExists(String path)
     {
         if (!Paths.get(path).toFile().exists())
         {
-            Paths.get(path).toFile().mkdir();
+            Paths.get(path).toFile().mkdirs();
         }
     }
 
+    public static synchronized Properties loadPropertie(String path) throws IOException, URISyntaxException
+    {
+        Properties properties;
+        try (InputStream inputStream = new FileInputStream(getFileFromResources(path)))
+        {
+            properties = new Properties();
+            properties.load(inputStream);
+        }
+        return properties;
+    }
 }

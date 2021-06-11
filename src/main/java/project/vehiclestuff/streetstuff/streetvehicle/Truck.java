@@ -7,9 +7,9 @@ public class Truck extends StreetVehicle
     private static final String NAME = "TCK";
     private double weightLimit;
 
-    public Truck(StreetRoad streetRoad)
+    public Truck(StreetRoad streetRoad, int speed)
     {
-        super(streetRoad);
+        super(streetRoad, speed);
     }
 
     @Override

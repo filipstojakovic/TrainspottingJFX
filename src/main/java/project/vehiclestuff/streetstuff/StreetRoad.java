@@ -8,7 +8,6 @@ import java.util.List;
 public class StreetRoad
 {
     private String name;
-    private int speed;
 
     private final List<Field> streetFields;
 
@@ -25,16 +24,6 @@ public class StreetRoad
     public List<Field> getStreetFields()
     {
         return streetFields;
-    }
-
-    public void setSpeed(int speed)
-    {
-        this.speed = speed;
-    }
-
-    public int getSpeed()
-    {
-        return speed;
     }
 
     public void setName(String name)

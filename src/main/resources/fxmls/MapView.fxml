@@ -9,14 +9,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/16" fx:controller="project.map.MapController">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.map.MapController">
     <center>
         <GridPane fx:id="gridPane" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
             </padding>
             <BorderPane.margin>
-                <Insets />
+                <Insets/>
             </BorderPane.margin>
         </GridPane>
     </center>
@@ -25,33 +25,35 @@
             <children>
                 <VBox layoutY="265.0" maxWidth="1.7976931348623157E308" prefHeight="86.0" prefWidth="234.0">
                     <children>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStartBtnClicked" text="Start">
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStartBtnClicked"
+                                text="Start">
                             <VBox.margin>
-                                <Insets bottom="10.0" />
+                                <Insets bottom="10.0"/>
                             </VBox.margin>
                             <font>
-                                <Font size="15.0" />
+                                <Font size="15.0"/>
                             </font>
                         </Button>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openDialogClicked" text="Dialog">
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openDialogClicked"
+                                text="Dialog">
                             <font>
-                                <Font size="15.0" />
+                                <Font size="15.0"/>
                             </font>
                         </Button>
                     </children>
                     <padding>
-                        <Insets left="10.0" right="10.0" />
+                        <Insets left="10.0" right="10.0"/>
                     </padding>
                 </VBox>
                 <Label fx:id="infoLabel">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </padding>
                 </Label>
             </children>
         </Pane>
     </right>
     <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
     </padding>
 </BorderPane>

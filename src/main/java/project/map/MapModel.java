@@ -12,6 +12,7 @@ import project.vehiclestuff.streetstuff.StreetRoad;
 import project.vehiclestuff.trainstuff.RailRoad;
 import project.vehiclestuff.trainstuff.trainstation.TrainStation;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -31,7 +32,7 @@ public class MapModel
     {
         //get path from properties
         String mapFile = properties.getProperty(Constants.TRAINSTATION_MAP_PROP);
-        List<String> mapList = Files.readAllLines(Utils.getFileFromResources(mapFile).toPath());
+        List<String> mapList = Files.readAllLines(new File(mapFile).toPath());
         mapList.remove(0);                          //trim first row
         mapList = mapList.subList(0, Constants.MAP_DIM); // trim after 30 rows
 
@@ -47,8 +48,8 @@ public class MapModel
     public HashMap<String, TrainStation> initializeTrainStationMap(List<RailRoad> railRoads) throws IOException, ParseException, URISyntaxException
     {
         String trainStationFile = properties.getProperty(Constants.TRAINSTATION_JSON_PROP);
-        String trainStationPath = Utils.getFileFromResources(trainStationFile).getPath();
-        HashMap<String, TrainStation> trainStationMap = TrainStationJsonParser.getTrainStationsFromJson(trainStationPath);
+        //String trainStationPath = Utils.getFileFromResources(trainStationFile).getPath();
+        HashMap<String, TrainStation> trainStationMap = TrainStationJsonParser.getTrainStationsFromJson(trainStationFile);
         for (var railRoad : railRoads)
         {
             String trainStationName = railRoad.getStartStationName();
@@ -67,13 +68,16 @@ public class MapModel
 
     public List<RailRoad> initRailRoads()
     {
-        return RailRoadJsonParser.getRailRoadListFromJson("./src/main/resources/mapstuff/roads/railroads.json");
+        //todo: propertie path maybe
+        String path = properties.getProperty(Constants.RAILROADS_PROP);
+        return RailRoadJsonParser.getRailRoadListFromJson(path);
     }
 
     public List<Street> initializeStreets()
     {
         List<Street> streets = new ArrayList<>();
-        List<StreetRoad> streetRoads = StreetRoadJsonParser.getStreetRoadsFromJson("./src/main/resources/mapstuff/roads/streetroads.json");
+        String path = properties.getProperty(Constants.STREETROADS_PROP);
+        List<StreetRoad> streetRoads = StreetRoadJsonParser.getStreetRoadsFromJson(path);
         for (StreetRoad streetRoad : streetRoads)
         {
             Street street = doesStreetAlreadyExist(streetRoad.getName(), streets);

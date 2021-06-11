@@ -29,11 +29,11 @@ public abstract class StreetVehicle extends Thread implements IMoveable
 
     }
 
-    public StreetVehicle(StreetRoad streetRoad)
+    public StreetVehicle(StreetRoad streetRoad, int speed)
     {
         setDaemon(true);
         this.streetRoad = streetRoad;
-        SPEED = streetRoad.getSpeed();
+        SPEED = speed;
     }
 
     public abstract String getStreetVehicleName();

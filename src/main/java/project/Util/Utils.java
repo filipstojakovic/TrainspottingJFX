@@ -35,7 +35,7 @@ public abstract class Utils
     public static synchronized Properties loadPropertie(String path) throws IOException, URISyntaxException
     {
         Properties properties;
-        try (InputStream inputStream = new FileInputStream(getFileFromResources(path)))
+        try (InputStream inputStream = new FileInputStream(new File(path)))
         {
             properties = new Properties();
             properties.load(inputStream);

@@ -7,6 +7,8 @@ public class Street
 {
     private String streetName;
     private int speedLimit;
+
+    private int maxNumOfVehicles;
     private List<StreetRoad> roads;
 
     public Street()
@@ -37,12 +39,12 @@ public class Street
         this.streetName = streetName;
     }
 
-    public int getSpeedLimit()
+    public synchronized int getSpeedLimit()
     {
         return speedLimit;
     }
 
-    public void setSpeedLimit(int speedLimit)
+    public synchronized void setSpeedLimit(int speedLimit)
     {
         this.speedLimit = speedLimit;
     }
@@ -55,5 +57,15 @@ public class Street
     public void setRoads(List<StreetRoad> roads)
     {
         this.roads = roads;
+    }
+
+    public synchronized int getMaxNumOfVehicles()
+    {
+        return maxNumOfVehicles;
+    }
+
+    public synchronized void setMaxNumOfVehicles(int maxNumOfVehicles)
+    {
+        this.maxNumOfVehicles = maxNumOfVehicles;
     }
 }

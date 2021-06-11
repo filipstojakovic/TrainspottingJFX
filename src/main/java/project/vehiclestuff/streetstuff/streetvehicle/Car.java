@@ -8,9 +8,9 @@ public class Car extends StreetVehicle
 
     private int numOfDoors;
 
-    public Car(StreetRoad streetRoad)
+    public Car(StreetRoad streetRoad, int speed)
     {
-        super(streetRoad);
+        super(streetRoad, speed);
     }
 
     @Override

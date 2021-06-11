@@ -1,5 +1,6 @@
 package project.spawners;
 
+import project.Util.Utils;
 import project.jsonparsers.TrainJsonParser;
 import project.vehiclestuff.trainstuff.Train;
 import project.vehiclestuff.trainstuff.trainstation.TrainStation;
@@ -56,8 +57,8 @@ public class TrainSpawner extends Thread
                     Path fileName = ev.context();
                     System.out.println(kind.name() + ": " + fileName);
                     if (fileName.toString().trim().endsWith(".json")
-                            && !visitedFileNames.contains(fileName.toString())
-                            && kind.equals(ENTRY_CREATE))
+                            && kind.equals(ENTRY_CREATE)
+                            && !visitedFileNames.contains(fileName.toString()))
                     {
                         Thread.sleep(MINOR_DELAY);
                         visitedFileNames.add(fileName.toString());
@@ -70,9 +71,7 @@ public class TrainSpawner extends Thread
 
                 boolean valid = key.reset();
                 if (!valid)
-                {
                     break;
-                }
             }
 
         } catch (IOException | InterruptedException ex)
@@ -83,6 +82,7 @@ public class TrainSpawner extends Thread
 
     public void getAllTrainsFromDirectory() throws FileNotFoundException
     {
+        Utils.createFolderIfNotExists(watchDirectoryFile.getAbsolutePath());
         File[] files = watchDirectoryFile.listFiles();
         //If this pathname does not denote a directory, then listFiles() returns null.
         if (files == null)

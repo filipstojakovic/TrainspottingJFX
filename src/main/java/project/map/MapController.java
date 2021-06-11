@@ -14,6 +14,7 @@ import project.constants.ColorConstants;
 import project.constants.Constants;
 import project.constants.FieldConstants;
 import project.map.Field.*;
+import project.spawners.StreetVehicleSpawner;
 import project.spawners.TrainSpawner;
 import project.vehiclestuff.streetstuff.Street;
 import project.vehiclestuff.trainstuff.RailRoad;
@@ -75,15 +76,14 @@ public class MapController implements Initializable
             e.printStackTrace();
         }
 
-        //StreetVehicleSpawner streetVehicleSpawner = null;
-        //try
-        //{
-        //    streetVehicleSpawner = new StreetVehicleSpawner(streets);
-        //    streetVehicleSpawner.start();
-        //} catch (IOException exception)
-        //{
-        //    exception.printStackTrace();
-        //}
+        try
+        {
+            StreetVehicleSpawner streetVehicleSpawner = new StreetVehicleSpawner(streets);
+            streetVehicleSpawner.start();
+        } catch (IOException | URISyntaxException ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
 

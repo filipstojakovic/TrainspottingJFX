@@ -10,7 +10,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -30,8 +29,11 @@ public class MovementDialogController implements Initializable, EventHandler<Mou
         try
         {
             movementDialogModel = new MovementDialogModel();
-            listView.getItems().addAll(movementDialogModel.getAllFilesFromDir());
-            listView.setOnMouseClicked(this);
+            movementDialogModel.getAllFilesFromDir(fileList ->
+            {
+                listView.getItems().addAll(fileList);
+                listView.setOnMouseClicked(this);
+            });
 
         } catch (Exception ex)
         {
@@ -47,16 +49,7 @@ public class MovementDialogController implements Initializable, EventHandler<Mou
             return;
 
         String selectedItem = selectedItems.get(0);
-        try
-        {
-            String fileContent = movementDialogModel.getFileContent(selectedItem);
-            textArea.setText(fileContent);
-
-        } catch (IOException ex)
-        {
-            textArea.setText("Unable to get file content");
-            ex.printStackTrace();
-        }
+        movementDialogModel.getFileContent(selectedItem, text -> textArea.setText(text));
     }
 
     @FXML

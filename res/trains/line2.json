@@ -1,11 +1,13 @@
 {
+  "train_speed": 2000,
+
   "stationOrder": [
     "E",
     "C",
     "B",
     "A"
   ],
-  "train": [
+  "train_parts": [
     {
       "type": "PassengerLocomotive",
       "engine": "steam"

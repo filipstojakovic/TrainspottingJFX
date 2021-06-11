@@ -42,6 +42,7 @@ public class MapController implements Initializable
 
     private HashMap<String, TrainStation> trainStationMap;
     private List<Street> streets;
+    private RampWatcher rampWatcher;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
@@ -52,7 +53,7 @@ public class MapController implements Initializable
             mapModel = new MapModel();
             initializeMap();
             List<RailRoad> railRoads = mapModel.initRailRoads();
-            new RampWatcher(railRoads).start();
+            rampWatcher = new RampWatcher(railRoads);
             trainStationMap = mapModel.initializeTrainStationMap(railRoads);
             streets = mapModel.initializeStreets();
 
@@ -63,12 +64,18 @@ public class MapController implements Initializable
         }
     }
 
+    private TrainSpawner trainSpawner;
+    private StreetVehicleSpawner streetVehicleSpawner;
+
     @FXML
     void onStartBtnClicked(ActionEvent event)
     {
+        rampWatcher.start();
         try
         {
-            TrainSpawner trainSpawner = mapModel.initTrainSpawner(trainStationMap);
+            if (trainSpawner != null)
+                trainSpawner.close();
+            trainSpawner = mapModel.initTrainSpawner(trainStationMap);
             trainSpawner.getAllTrainsFromDirectory();
             trainSpawner.start();
         } catch (URISyntaxException | FileNotFoundException e)
@@ -78,7 +85,9 @@ public class MapController implements Initializable
 
         try
         {
-            StreetVehicleSpawner streetVehicleSpawner = new StreetVehicleSpawner(streets);
+            if (streetVehicleSpawner != null)
+                streetVehicleSpawner.close();
+            streetVehicleSpawner = new StreetVehicleSpawner(streets);
             streetVehicleSpawner.start();
         } catch (IOException | URISyntaxException ex)
         {

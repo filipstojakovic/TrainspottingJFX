@@ -2,28 +2,29 @@ package project.vehiclestuff.trainstuff;
 
 import javafx.application.Platform;
 import javafx.scene.control.Label;
+import project.exception.NoDestinationStationsException;
+import project.exception.TrainWithoutPartsException;
 import project.map.Field.Field;
 import project.map.Field.RailField;
 import project.map.Field.TrainStationField;
 import project.map.Map;
 import project.map.MapController;
-import project.vehiclestuff.IMoveable;
 import project.vehiclestuff.trainstuff.trainstation.TrainStation;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 
-public class Train extends Thread implements IMoveable
+public class Train extends Thread
 {
-    public static final int TRAIN_MOVE_SPEED = 100;
+    private static final String THUNDER = "⚡";
+
     private final String trainName;
     private Queue<TrainStation> destinationStationsOrder;
     private List<TrainPart> trainPartList;
+    private int trainSpeed;
     private boolean isElectric; // if there is a Locomotive with Electric Engine
-    private static final String THUNDER = "⚡";
-
-    private static final Object LOCK = new Object();
+    private TrainHistory trainHistory;
 
     public static int i = 0;
 
@@ -31,6 +32,7 @@ public class Train extends Thread implements IMoveable
     {
         trainName = String.valueOf(i++);
         setDaemon(true);
+        trainHistory = new TrainHistory(); //TODO: add my stuff
     }
 
     public String getTrainName()
@@ -39,18 +41,20 @@ public class Train extends Thread implements IMoveable
     }
 
     @Override
-    public void writeCurrentPositionToFile(int x, int y, String description, String filePath)
+    public void run()
     {
-        String text = trainName + " " + description;
-    }
+        try
+        {
+            validateTrainAttributes();
 
-    @Override
-    public synchronized void run()
-    {
-        //todo: check if trainPartList.size > 0 ??
+        } catch (TrainWithoutPartsException | NoDestinationStationsException ex)
+        {
+            ex.printStackTrace();
+            return;
+        }
+        //TODO: check parking in station
+
         final TrainStation beginingStation = destinationStationsOrder.poll();
-        //todo: check if there is behinstation is null
-
         beginingStation.addParkedTrain(this);
 
         TrainStation firstStation;
@@ -83,27 +87,18 @@ public class Train extends Thread implements IMoveable
                 int previousX = stationField.getxPosition();
                 int previousY = stationField.getyPosition();
 
-                //Label label = MapController.getGridCell(currentX, currentY);
-                //synchronized (LOCK)
-                //{
-                //    while (!"".equals(label.getText()))
-                //        Thread.sleep(300);
-                //}
-
-                firstStation.removeParkedTrain(this);
-
+                firstStation.removeParkedTrain(this); // remove from TrainStation parked train
 
                 Field nextField = railRoadField;
                 while (!(nextField instanceof TrainStationField))
                 {
                     Label label = MapController.getGridCell(nextField.getxPosition(), nextField.getyPosition());
                     while (!"".equals(label.getText()))
-                    {
-                        Thread.sleep(300);
-                    }
+                        Thread.sleep(trainSpeed);
+
                     shiftBackTrainPosition(currentX, currentY);
                     drawTrainOnMap();
-                    Thread.sleep(TRAIN_MOVE_SPEED); // Train speed here
+                    Thread.sleep(trainSpeed); // Train speed here
 
                     nextField = Map.getNextField(currentX, currentY, previousX, previousY, RailField.class);
                     previousX = currentX;
@@ -113,7 +108,7 @@ public class Train extends Thread implements IMoveable
                 }
 
                 parkTrainInStation(); // TODO: method to park in TrainStation parkedTrainList
-
+                secondStation.addParkedTrain(this);
                 currentRailRoad.removeTrainFromRailRoad(this);
             }
 
@@ -126,13 +121,22 @@ public class Train extends Thread implements IMoveable
             currentRailRoad.removeTrainFromRailRoad(this);
     }
 
+    private void validateTrainAttributes() throws TrainWithoutPartsException, NoDestinationStationsException
+    {
+        if (trainPartList == null || trainPartList.isEmpty())
+            throw new TrainWithoutPartsException();
+
+        if (destinationStationsOrder == null || destinationStationsOrder.isEmpty())
+            throw new NoDestinationStationsException();
+    }
+
     private void parkTrainInStation() throws InterruptedException
     {
         for (TrainPart trainPart : trainPartList)
         {
             shiftBackTrainPosition(-1, -1);
             drawTrainOnMap();
-            Thread.sleep(TRAIN_MOVE_SPEED); // Train speed here
+            Thread.sleep(trainSpeed); // Train speed here
         }
     }
 
@@ -147,34 +151,40 @@ public class Train extends Thread implements IMoveable
 
     private void shiftBackTrainPosition(int currentX, int currentY)
     {
+        deleteLastTrainPartText();
         for (int i = trainPartList.size() - 1; i > 0; i--)
         {
             TrainPart trainPart = trainPartList.get(i);
-            int partx = trainPart.getCurrentX();
-            int party = trainPart.getCurrentY();
-            Platform.runLater(() ->
-            {
-                var label = MapController.getGridCell(partx, party);
-                if (label != null)
-                    label.setText("");
-            });
             TrainPart trainPartBefore = trainPartList.get(i - 1);
             trainPart.setPosition(trainPartBefore.getCurrentX(), trainPartBefore.getCurrentY());
         }
         trainPartList.get(0).setPosition(currentX, currentY);
     }
 
+    private void deleteLastTrainPartText()
+    {
+        var lastField = trainPartList.get(trainPartList.size() - 1);
+        int xPosition = lastField.getCurrentX();
+        int yPosition = lastField.getCurrentY();
+        Platform.runLater(() ->
+        {
+            var label = MapController.getGridCell(xPosition, yPosition);
+            if (label != null)
+                label.setText("");
+        });
+    }
+
     private void drawTrainOnMap()
     {
-        for (var trainPart : trainPartList)
+        Platform.runLater(() ->
         {
-            Platform.runLater(() ->
+            for (var trainPart : trainPartList)
             {
                 var label = MapController.getGridCell(trainPart.getCurrentX(), trainPart.getCurrentY());
                 if (label != null)
                     label.setText(trainPart.getPartName());
-            });
-        }
+            }
+        });
     }
 
     public Queue<TrainStation> getDestinationStationsOrder()
@@ -197,6 +207,15 @@ public class Train extends Thread implements IMoveable
         this.trainPartList = trainPartList;
     }
 
+    public int getTrainSpeed()
+    {
+        return trainSpeed;
+    }
+
+    public void setTrainSpeed(int trainSpeed)
+    {
+        this.trainSpeed = trainSpeed;
+    }
 
     @Override
     public boolean equals(Object o)

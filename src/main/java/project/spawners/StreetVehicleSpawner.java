@@ -33,6 +33,8 @@ public class StreetVehicleSpawner extends Thread
     private final HashMap<String, Integer> streetNumOfVehiclesMap;
 
     Properties properties;
+    private boolean isActive;
+    private boolean isWatcherActive;
 
     public StreetVehicleSpawner(List<Street> streets) throws IOException, URISyntaxException
     {
@@ -74,7 +76,8 @@ public class StreetVehicleSpawner extends Thread
         startWatcher();
         try
         {
-            while (true)
+            isActive = true;
+            while (isActive)
             {
                 List<Street> streetsThatAreNotFull = getNotFullStreets();
                 if (streetsThatAreNotFull == null || streetsThatAreNotFull.isEmpty())
@@ -98,6 +101,8 @@ public class StreetVehicleSpawner extends Thread
                 streetVehicle.start();
                 Thread.sleep(SPAWN_SPEED);
             }
+
+            System.out.println("Closing StreetVehicleSpawner thread");
         } catch (Exception ex)
         {
             ex.printStackTrace();
@@ -125,7 +130,8 @@ public class StreetVehicleSpawner extends Thread
                 Path dir = directory.toPath();
                 dir.register(watcher, ENTRY_MODIFY);
                 //System.out.println("Watch Service registered for dir: " + directory.getAbsolutePath());
-                while (true)
+                isWatcherActive = true;
+                while (isWatcherActive)
                 {
                     WatchKey key;
                     try
@@ -164,7 +170,7 @@ public class StreetVehicleSpawner extends Thread
                         break;
                     }
                 }
-
+                System.out.println("Closing " + directory.getName() + " file watcher");
             } catch (IOException | URISyntaxException ex)
             {
                 System.err.println(ex);
@@ -183,5 +189,11 @@ public class StreetVehicleSpawner extends Thread
                 new Truck(streetRoad, speedLimit) : new Car(streetRoad, speedLimit);
         num++;
         return streetVehicle;
+    }
+
+    public void close()
+    {
+        isActive = false;
+        isWatcherActive = false;
     }
 }

@@ -21,10 +21,12 @@ public class TrainSpawner extends Thread
     private final File watchDirectoryFile;
     private final HashMap<String, TrainStation> trainStationMap;
     private final List<String> visitedFileNames;
+    private boolean isActive;
 
     public TrainSpawner(String directoryPath, HashMap<String, TrainStation> trainStationMap)
     {
         visitedFileNames = new ArrayList<>();
+        Utils.createFolderIfNotExists(directoryPath);
         watchDirectoryFile = new File(directoryPath);
         this.trainStationMap = trainStationMap;
     }
@@ -39,7 +41,8 @@ public class TrainSpawner extends Thread
             dir.register(watcher, ENTRY_CREATE);
             //System.out.println("Watch Service registered for dir: " + dir);
 
-            while (true)
+            isActive = true;
+            while (isActive)
             {
                 WatchKey key;
                 try
@@ -73,6 +76,7 @@ public class TrainSpawner extends Thread
                 if (!valid)
                     break;
             }
+            System.out.println("Closing " + watchDirectoryFile.getName() + " folder watcher");
 
         } catch (IOException | InterruptedException ex)
         {
@@ -115,5 +119,10 @@ public class TrainSpawner extends Thread
 
         //TODO: validate train
         return train;
+    }
+
+    public void close()
+    {
+        isActive = false;
     }
 }

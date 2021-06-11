@@ -4,30 +4,16 @@ import javafx.application.Platform;
 import project.map.Field.Field;
 import project.map.Field.RampField;
 import project.map.MapController;
-import project.vehiclestuff.IMoveable;
 import project.vehiclestuff.streetstuff.StreetRoad;
 
-public abstract class StreetVehicle extends Thread implements IMoveable
+public abstract class StreetVehicle extends Thread
 {
     protected StreetRoad streetRoad;
 
-    private final int SPEED; // TODO: make it final
+    private final int SPEED;
     private String mark;
     private String model;
     private int year;
-
-    //public StreetVehicle()
-    //{
-    //    setDaemon(true);
-    //}
-
-
-    @Override
-    public void writeCurrentPositionToFile(int x, int y, String description, String filePath)
-    {
-        String vehicleName = getStreetVehicleName();
-
-    }
 
     public StreetVehicle(StreetRoad streetRoad, int speed)
     {
@@ -49,7 +35,6 @@ public abstract class StreetVehicle extends Thread implements IMoveable
         {
             for (Field field : streetRoadFields)
             {
-                //todo: check if car (slower car) is in front or if there is guzva
                 firstX = field.getxPosition();
                 firstY = field.getyPosition();
 
@@ -67,7 +52,7 @@ public abstract class StreetVehicle extends Thread implements IMoveable
                 }
 
 
-                if (field instanceof RampField rampField)// && rampField.isClosed())
+                if (field instanceof RampField rampField)
                 {
                     if (rampField.isClosed())
                     {

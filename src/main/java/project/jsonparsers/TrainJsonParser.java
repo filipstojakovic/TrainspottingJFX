@@ -4,10 +4,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import project.vehiclestuff.trainstuff.Train;
 import project.vehiclestuff.trainstuff.TrainPart;
-import project.vehiclestuff.trainstuff.locomotive.CargoLocomotive;
-import project.vehiclestuff.trainstuff.locomotive.ManeuverLocomotive;
-import project.vehiclestuff.trainstuff.locomotive.PassengerLocomotive;
-import project.vehiclestuff.trainstuff.locomotive.UniversalLocomotive;
+import project.vehiclestuff.trainstuff.locomotive.*;
 import project.vehiclestuff.trainstuff.trainstation.TrainStation;
 import project.vehiclestuff.trainstuff.wagon.*;
 
@@ -15,19 +12,26 @@ import java.util.*;
 
 public class TrainJsonParser extends JsonParser
 {
+    public static final String TRAIN_SPEED = "train_speed";
+    public static final String TRAIN_PARTS = "train_parts";
+    public static final String TYPE = "type";
+    public static final String STATION_ORDER = "stationOrder";
+
     public static Train getTrainPartsFromJson(final HashMap<String, TrainStation> trainstationHashMap, String trainPath)
     {
         Train train = new Train();
         try
         {
             JSONObject obj = (JSONObject) getJsonObjectFromFile(trainPath);
-
+            int trainSpeed = ((Long) obj.get(TRAIN_SPEED)).intValue();
+            train.setTrainSpeed(trainSpeed);
             List<TrainPart> trainPartList = new ArrayList<>();
-            JSONArray jsonArray = (JSONArray) obj.get("train");
+            JSONArray jsonArray = (JSONArray) obj.get(TRAIN_PARTS);
             for (Object arrayObject : jsonArray)
             {
                 JSONObject jsonObject = (JSONObject) arrayObject;
-                TrainPart trainPart = getTrainPartByClassName((String) jsonObject.get("type"));
+                TrainPart trainPart = getTrainPartByClassName((String) jsonObject.get(TYPE));
+                //if(trainPart instanceof Locomotive)
                 //todo: if locomotive need Engine
                 //train signature
                 trainPartList.add(trainPart);
@@ -50,7 +54,7 @@ public class TrainJsonParser extends JsonParser
     private static Queue<TrainStation> getStationOrder(HashMap<String, TrainStation> trainstationHashMap, JSONObject obj)
     {
         Queue<TrainStation> destinationOrder = new LinkedList<>();
-        JSONArray jsonArray = (JSONArray) obj.get("stationOrder");
+        JSONArray jsonArray = (JSONArray) obj.get(STATION_ORDER);
         for (int i = 0; i < jsonArray.size(); i++)
         {
             String stationName = (String) jsonArray.get(i);

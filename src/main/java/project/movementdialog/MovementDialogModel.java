@@ -15,7 +15,7 @@ import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static project.constants.Constants.SAVED_TRAINS_DIR_PROP;
+import static project.constants.Constants.TRAIN_HISTORY_DIR_PROP;
 
 public class MovementDialogModel
 {
@@ -30,7 +30,7 @@ public class MovementDialogModel
     {
         new Thread(() ->
         {
-            String trainsDir = properties.getProperty(SAVED_TRAINS_DIR_PROP);
+            String trainsDir = properties.getProperty(TRAIN_HISTORY_DIR_PROP);
             Utils.createFolderIfNotExists(trainsDir);
             File directory = new File(trainsDir);
             var files = directory.listFiles();
@@ -49,7 +49,7 @@ public class MovementDialogModel
     {
         new Thread(() ->
         {
-            String trainsDir = properties.getProperty(SAVED_TRAINS_DIR_PROP);
+            String trainsDir = properties.getProperty(TRAIN_HISTORY_DIR_PROP);
             String filePath = trainsDir + File.separator + fileName;
             //TODO: deserialize
             String text = null;

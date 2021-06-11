@@ -7,7 +7,6 @@ import java.util.List;
 
 public class RampWatcher extends Thread
 {
-    public static final int MINOR_DELAY = 10;
     private final List<RailRoad> railRoads;
 
     private boolean isActive;
@@ -25,38 +24,17 @@ public class RampWatcher extends Thread
         {
             for (RailRoad railRoad : railRoads)
             {
-                try
-                {
-                    RailRoad opositeRoad = railRoads.stream().filter(x -> railRoad.getStartStationName().equals(x.getEndStationName())).findFirst().get();
+                RailRoad opositeRoad = railRoads.stream()
+                        .filter(x -> railRoad.getStartStationName().equals(x.getEndStationName()))
+                        .findFirst().get();
 
-                    if (shouldCloseRampOnRailRoad(railRoad) || shouldCloseRampOnRailRoad(opositeRoad))
-                    {
-                        railRoad.getRamps().forEach(x ->
-                        {
-                            //TODO: delete me
-                            //Label rampLable = MapController.getGridCell(x.getxPosition(),x.getyPosition());
-                            //Platform.runLater(()->LabelUtils.setLableBackgroundAndBorderColor(rampLable, ColorConstants.RED));
-                            x.setClosed(true);
-                        });
-
-                    } else
-                    {
-                        railRoad.getRamps().forEach(x ->
-                        {
-                            //Label rampLable = MapController.getGridCell(x.getxPosition(),x.getyPosition());
-                            //Platform.runLater(()->LabelUtils.setLableBackgroundAndBorderColor(rampLable, ColorConstants.BLACK));
-                            x.setClosed(false);
-                        });
-                    }
-
-                    Thread.sleep(MINOR_DELAY);
-                } catch (InterruptedException e)
-                {
-                    e.printStackTrace();
-                }
+                boolean shouldClose = shouldCloseRampOnRailRoad(railRoad) || shouldCloseRampOnRailRoad(opositeRoad);
+                railRoad.getRamps().forEach(x -> x.setClosed(shouldClose));
             }
         }
     }
+
+    public static final int MINOR_DELAY = 1;
 
     private boolean shouldCloseRampOnRailRoad(RailRoad trainRoad)
     {
@@ -64,10 +42,13 @@ public class RampWatcher extends Thread
             return false;
 
         var railFields = trainRoad.getRoadFields();
-        int numOfRamps = 2;
         boolean shouldClose = false;
-        for (var field : railFields)
+
+        int numOfRamps = trainRoad.getRamps().size();
+
+        for (int i = 0; i < railFields.size() && numOfRamps > 0; i++)
         {
+            var field = railFields.get(i);
             if (field instanceof RampField)
                 numOfRamps--;
 
@@ -77,11 +58,7 @@ public class RampWatcher extends Thread
                 shouldClose = true;
                 break;
             }
-
-            if (numOfRamps == 0)
-                break;
         }
-
         return shouldClose;
     }
 

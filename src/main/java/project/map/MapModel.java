@@ -22,13 +22,12 @@ public class MapModel
 {
     private Properties properties;
 
-
-    public MapModel() throws Exception
+    public MapModel() throws IOException, URISyntaxException
     {
         properties = Utils.loadPropertie(Constants.CONFIGURATION_FILE);
     }
 
-    public List<List<String>> getMap() throws Exception
+    public List<List<String>> getMap() throws IOException
     {
         //get path from properties
         String mapFile = properties.getProperty(Constants.TRAINSTATION_MAP_PROP);
@@ -58,6 +57,13 @@ public class MapModel
             trainStation.addTrainLine(railRoad);
         }
         return trainStationMap;
+    }
+
+    public String getTrainHistoryPathDir()
+    {
+        String trainHistoryPath = properties.getProperty(Constants.TRAIN_HISTORY_DIR_PROP);
+        Utils.createFolderIfNotExists(trainHistoryPath);
+        return trainHistoryPath;
     }
 
     public TrainSpawner initTrainSpawner(HashMap<String, TrainStation> trainStationMap) throws URISyntaxException

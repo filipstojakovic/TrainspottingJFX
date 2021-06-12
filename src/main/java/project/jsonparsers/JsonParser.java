@@ -14,10 +14,15 @@ public abstract class JsonParser
     protected static Object getJsonObjectFromFile(String path) throws IOException, ParseException
     {
         Object json;
-        try (FileReader fileReader = new FileReader(new File(path)))
+        try (FileReader fileReader = new FileReader(path))
         {
             json = parser.parse(fileReader);
         }
         return json;
+    }
+
+    protected static Object getJsonObjectFromFile(File path) throws IOException, ParseException
+    {
+        return getJsonObjectFromFile(path.getPath());
     }
 }

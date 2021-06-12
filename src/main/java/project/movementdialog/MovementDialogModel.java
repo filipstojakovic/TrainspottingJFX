@@ -3,12 +3,13 @@ package project.movementdialog;
 import javafx.application.Platform;
 import project.Util.Utils;
 import project.constants.Constants;
+import project.vehiclestuff.trainstuff.TrainHistory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -51,19 +52,16 @@ public class MovementDialogModel
         {
             String trainsDir = properties.getProperty(TRAIN_HISTORY_DIR_PROP);
             String filePath = trainsDir + File.separator + fileName;
-            //TODO: deserialize
-            String text = null;
-            try
-            {
-                text = String.join("\n", Files.readAllLines(Paths.get(filePath)));
-            } catch (IOException exception)
-            {
-                text = "Unable to open file";
-                exception.printStackTrace();
-            }
-            String finalText = text;
-            Platform.runLater(() -> function.accept(finalText));
 
+            try (ObjectInputStream oos = new ObjectInputStream(new FileInputStream(filePath)))
+            {
+                TrainHistory trainHistory = (TrainHistory) oos.readObject();
+                String details = trainHistory.toString();
+                Platform.runLater(() -> function.accept(details));
+            } catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
         }).start();
     }
 }

@@ -11,6 +11,8 @@ public class RampWatcher extends Thread
 
     private boolean isActive;
 
+    public static final Object RAMP_LOCK = new Object();
+
     public RampWatcher(List<RailRoad> railRoads)
     {
         isActive = true;
@@ -28,13 +30,24 @@ public class RampWatcher extends Thread
                         .filter(x -> railRoad.getStartStationName().equals(x.getEndStationName()))
                         .findFirst().get();
 
-                boolean shouldClose = shouldCloseRampOnRailRoad(railRoad) || shouldCloseRampOnRailRoad(opositeRoad);
-                railRoad.getRamps().forEach(x -> x.setClosed(shouldClose));
+                boolean shouldClose;
+                synchronized (RAMP_LOCK)
+                {
+                    shouldClose = shouldCloseRampOnRailRoad(railRoad) || shouldCloseRampOnRailRoad(opositeRoad);
+                    railRoad.getRamps().forEach(x -> x.setClosed(shouldClose));
+                    railRoad.getRamps().forEach(x ->
+                    {
+                        synchronized (x.RAMP_LOCK)
+                        {
+                            x.RAMP_LOCK.notify();
+                        }
+                    });
+                }
             }
         }
     }
 
-    public static final int MINOR_DELAY = 1;
+    public static final int MINOR_DELAY = 300;
 
     private boolean shouldCloseRampOnRailRoad(RailRoad trainRoad)
     {

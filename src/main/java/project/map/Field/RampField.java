@@ -2,6 +2,7 @@ package project.map.Field;
 
 public class RampField extends Field
 {
+    public final Object RAMP_LOCK = new Object();
     private boolean isClosed;
 
     public boolean isHasElectricity()

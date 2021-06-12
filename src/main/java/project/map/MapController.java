@@ -42,18 +42,17 @@ public class MapController implements Initializable
 
     private HashMap<String, TrainStation> trainStationMap;
     private List<Street> streets;
-    private RampWatcher rampWatcher;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
+        infoLabel.setText(Constants.INFO_TEXT);
         try
         {
-            infoLabel.setText(Constants.INFO_TEXT);
             mapModel = new MapModel();
             initializeMap();
             List<RailRoad> railRoads = mapModel.initRailRoads();
-            rampWatcher = new RampWatcher(railRoads);
+            new RampWatcher(railRoads).start();
             trainStationMap = mapModel.initializeTrainStationMap(railRoads);
             streets = mapModel.initializeStreets();
 
@@ -61,6 +60,14 @@ public class MapController implements Initializable
         {
             ex.printStackTrace();
             System.exit(1);
+        }
+        try
+        {
+            if (mapModel != null)
+                TrainSpawner.trainHistoryDirPath = mapModel.getTrainHistoryPathDir();
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
         }
     }
 
@@ -70,7 +77,6 @@ public class MapController implements Initializable
     @FXML
     void onStartBtnClicked(ActionEvent event)
     {
-        rampWatcher.start();
         try
         {
             if (trainSpawner != null)
@@ -135,6 +141,7 @@ public class MapController implements Initializable
     private void initializeMap() throws Exception
     {
         mapPane = gridPane;
+
         List<List<String>> mapValues = mapModel.getMap();
 
         Map.mapFields = new ArrayList<>();

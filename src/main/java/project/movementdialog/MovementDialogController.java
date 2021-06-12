@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
@@ -33,6 +34,13 @@ public class MovementDialogController implements Initializable, EventHandler<Mou
             {
                 listView.getItems().addAll(fileList);
                 listView.setOnMouseClicked(this);
+                listView.setOnKeyPressed(keyEvent ->
+                {
+                    if (keyEvent.getCode().equals(KeyCode.ENTER))
+                    {
+                        handle(null);
+                    }
+                });
             });
 
         } catch (Exception ex)

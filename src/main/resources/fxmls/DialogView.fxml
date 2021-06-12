@@ -2,37 +2,58 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="510.0"
-            prefWidth="684.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/15.0.1"
-            fx:controller="project.movementdialog.MovementDialogController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="510.0" prefWidth="684.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/16" fx:controller="project.movementdialog.MovementDialogController">
     <center>
-        <TextArea fx:id="textArea" editable="false" prefHeight="377.0" prefWidth="461.0"
-                  text="Select train to view details" BorderPane.alignment="CENTER">
+        <VBox BorderPane.alignment="CENTER">
             <BorderPane.margin>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </BorderPane.margin>
-        </TextArea>
+            <children>
+                <Label text="Train details:">
+                    <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </VBox.margin>
+                </Label>
+                <TextArea fx:id="textArea" editable="false" prefHeight="455.0" prefWidth="455.0" text="Select train to view details" wrapText="true" />
+            </children>
+            <opaqueInsets>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </opaqueInsets>
+        </VBox>
     </center>
     <bottom>
         <Button mnemonicParsing="false" onAction="#closeBtnClicked" text="Close" BorderPane.alignment="CENTER_RIGHT">
             <font>
-                <Font size="14.0"/>
+                <Font name="System Bold" size="15.0" />
             </font>
             <BorderPane.margin>
-                <Insets bottom="10.0" right="20.0" top="10.0"/>
+                <Insets bottom="10.0" left="5.0" right="20.0" top="5.0" />
             </BorderPane.margin>
         </Button>
     </bottom>
     <left>
-        <ListView fx:id="listView" prefHeight="374.0" prefWidth="214.0" BorderPane.alignment="CENTER">
+        <VBox BorderPane.alignment="CENTER">
             <BorderPane.margin>
-                <Insets bottom="5.0" left="5.0" top="5.0"/>
+                <Insets bottom="5.0" left="5.0" top="5.0" />
             </BorderPane.margin>
-        </ListView>
+            <children>
+                <Label text="Train list:">
+                    <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </VBox.margin>
+                </Label>
+                <ListView fx:id="listView" prefHeight="451.0" prefWidth="214.0" />
+            </children>
+            <opaqueInsets>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </opaqueInsets>
+        </VBox>
     </left>
 </BorderPane>

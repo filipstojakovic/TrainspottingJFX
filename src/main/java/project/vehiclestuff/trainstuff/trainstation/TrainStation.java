@@ -14,7 +14,7 @@ public class TrainStation
     private String stationName;
     private List<RailRoad> trainRailRoads;
 
-    private HashMap<String,Train> parkedTrains;
+    private HashMap<String, Train> parkedTrains;
     private HashMap<String, Field> destinationFields;
 
     public TrainStation()
@@ -44,7 +44,7 @@ public class TrainStation
 
     public void addParkedTrain(Train train)
     {
-        parkedTrains.put(train.getTrainName(),train);
+        parkedTrains.put(train.getTrainName(), train);
     }
 
     public void removeParkedTrain(Train train)

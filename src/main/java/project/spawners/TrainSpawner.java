@@ -1,6 +1,7 @@
 package project.spawners;
 
 import project.Util.Utils;
+import project.exception.TrainNotValidException;
 import project.jsonparsers.TrainJsonParser;
 import project.vehiclestuff.trainstuff.Train;
 import project.vehiclestuff.trainstuff.trainstation.TrainStation;
@@ -19,6 +20,7 @@ public class TrainSpawner extends Thread
 {
     public static final int MINOR_DELAY = 200;
     private final File watchDirectoryFile;
+    public static String trainHistoryDirPath;
     private final HashMap<String, TrainStation> trainStationMap;
     private final List<String> visitedFileNames;
     private boolean isActive;
@@ -63,12 +65,20 @@ public class TrainSpawner extends Thread
                             && kind.equals(ENTRY_CREATE)
                             && !visitedFileNames.contains(fileName.toString()))
                     {
-                        Thread.sleep(MINOR_DELAY);
-                        visitedFileNames.add(fileName.toString());
-                        Path filePath = dir.resolve(fileName);
-                        Train train = getTrainFromFile(filePath);
-                        if (train != null)
-                            train.start();
+                        try
+                        {
+                            Thread.sleep(MINOR_DELAY);
+                            visitedFileNames.add(fileName.toString());
+                            Path filePath = dir.resolve(fileName);
+                            Train train = getTrainFromFile(filePath);
+                            if (train != null)
+                                train.start();
+
+                        } catch (InterruptedException | TrainNotValidException ex)
+                        {
+                            ex.printStackTrace();
+                        }
+
                     }
                 }
 
@@ -78,7 +88,7 @@ public class TrainSpawner extends Thread
             }
             System.out.println("Closing " + watchDirectoryFile.getName() + " folder watcher");
 
-        } catch (IOException | InterruptedException ex)
+        } catch (IOException ex)
         {
             System.err.println(ex);
         }
@@ -105,7 +115,7 @@ public class TrainSpawner extends Thread
                         train.start();
 
                     }
-                } catch (InterruptedException e)
+                } catch (InterruptedException | TrainNotValidException e)
                 {
                     e.printStackTrace();
                 }
@@ -113,12 +123,18 @@ public class TrainSpawner extends Thread
         }).start();
     }
 
-    private Train getTrainFromFile(Path filePath)
+    private Train getTrainFromFile(Path filePath) throws TrainNotValidException
     {
         Train train = TrainJsonParser.getTrainPartsFromJson(trainStationMap, filePath.toString());
 
+        validateTrain(train);
         //TODO: validate train
         return train;
+    }
+
+    private void validateTrain(Train train) throws TrainNotValidException
+    {
+
     }
 
     public void close()

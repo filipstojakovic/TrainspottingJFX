@@ -18,4 +18,14 @@ public class Car extends StreetVehicle
     {
         return NAME;
     }
+
+    public int getNumOfDoors()
+    {
+        return numOfDoors;
+    }
+
+    public void setNumOfDoors(int numOfDoors)
+    {
+        this.numOfDoors = numOfDoors;
+    }
 }

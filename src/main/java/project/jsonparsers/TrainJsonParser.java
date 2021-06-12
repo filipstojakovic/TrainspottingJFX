@@ -2,12 +2,18 @@ package project.jsonparsers;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 import project.vehiclestuff.trainstuff.Train;
 import project.vehiclestuff.trainstuff.TrainPart;
-import project.vehiclestuff.trainstuff.locomotive.*;
+import project.vehiclestuff.trainstuff.locomotive.CargoLocomotive;
+import project.vehiclestuff.trainstuff.locomotive.ManeuverLocomotive;
+import project.vehiclestuff.trainstuff.locomotive.PassengerLocomotive;
+import project.vehiclestuff.trainstuff.locomotive.UniversalLocomotive;
 import project.vehiclestuff.trainstuff.trainstation.TrainStation;
 import project.vehiclestuff.trainstuff.wagon.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class TrainJsonParser extends JsonParser
@@ -17,14 +23,22 @@ public class TrainJsonParser extends JsonParser
     public static final String TYPE = "type";
     public static final String STATION_ORDER = "stationOrder";
 
+    public static final int MIN_TRAIN_SPEED = 500;
+
     public static Train getTrainPartsFromJson(final HashMap<String, TrainStation> trainstationHashMap, String trainPath)
     {
-        Train train = new Train();
+        Train train;
         try
         {
-            JSONObject obj = (JSONObject) getJsonObjectFromFile(trainPath);
+            File file = new File(trainPath);
+            JSONObject obj = (JSONObject) getJsonObjectFromFile(file);
+            train = new Train(file.getName());
+
             int trainSpeed = ((Long) obj.get(TRAIN_SPEED)).intValue();
+            //if (trainSpeed < MIN_TRAIN_SPEED)
+            //    throw new TrainNotValidException("Train speed is set to " + trainSpeed + " (minimal speed is " + MIN_TRAIN_SPEED + ")");
             train.setTrainSpeed(trainSpeed);
+
             List<TrainPart> trainPartList = new ArrayList<>();
             JSONArray jsonArray = (JSONArray) obj.get(TRAIN_PARTS);
             for (Object arrayObject : jsonArray)
@@ -42,10 +56,10 @@ public class TrainJsonParser extends JsonParser
             train.setDestinationStationsOrder(stationsOrder);
             train.setTrainPartList(trainPartList);
 
-        } catch (Exception ex)
+        } catch (ParseException | IOException e)
         {
-            ex.printStackTrace();
             train = null;
+            e.printStackTrace();
         }
 
         return train;

@@ -23,10 +23,11 @@ public abstract class LabelUtils
         setLableBackgroundAndBorderColor(label, color);
         label.setMinWidth(TEXT_FIELD_WIDTH);
         label.setMinHeight(TEXT_FIELD_HEIGHT);
-        label.setPrefHeight(TEXT_FIELD_HEIGHT);
-        label.setPrefWidth(TEXT_FIELD_WIDTH);
-        label.setMaxWidth(TEXT_FIELD_WIDTH);
-        label.setMaxHeight(TEXT_FIELD_HEIGHT);
+        label.setPrefWidth(Region.USE_PREF_SIZE);
+        label.setPrefHeight(Region.USE_PREF_SIZE);
+        //label.setMaxHeight(Integer.MAX_VALUE);
+        //label.setMaxWidth(Integer.MAX_VALUE);
+
 
         return label;
     }

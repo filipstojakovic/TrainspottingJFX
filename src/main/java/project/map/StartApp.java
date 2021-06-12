@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import project.Util.Utils;
 
 public class StartApp extends Application implements EventHandler<WindowEvent>
 {
@@ -20,6 +21,7 @@ public class StartApp extends Application implements EventHandler<WindowEvent>
     {
         try
         {
+            Utils.createDefaultConfigFileIfNotExist();
             javafx.scene.Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("./fxmls/MapView.fxml"));
             primaryStage.setTitle("Trainspotting");
             primaryStage.setScene(new javafx.scene.Scene(root));

@@ -9,28 +9,31 @@ import project.map.Field.RailField;
 import project.map.Field.TrainStationField;
 import project.map.Map;
 import project.map.MapController;
+import project.map.RampWatcher;
+import project.spawners.TrainSpawner;
 import project.vehiclestuff.trainstuff.trainstation.TrainStation;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 
 public class Train extends Thread
 {
-    private static final String THUNDER = "⚡";
-
     private final String trainName;
     private Queue<TrainStation> destinationStationsOrder;
     private List<TrainPart> trainPartList;
     private int trainSpeed;
-    private boolean isElectric; // if there is a Locomotive with Electric Engine
+    private boolean isElectric = true; // if there is a Locomotive with Electric Engine
     private TrainHistory trainHistory;
 
     public static int i = 0;
 
-    public Train()
+    public Train(String trainName)
     {
-        trainName = String.valueOf(i++);
+        this.trainName = trainName;
         setDaemon(true);
         trainHistory = new TrainHistory(); //TODO: add my stuff
     }
@@ -57,6 +60,7 @@ public class Train extends Thread
         final TrainStation beginingStation = destinationStationsOrder.poll();
         beginingStation.addParkedTrain(this);
 
+
         TrainStation firstStation;
         TrainStation secondStation = beginingStation;
 
@@ -67,6 +71,7 @@ public class Train extends Thread
         {
             while (!destinationStationsOrder.isEmpty())
             {
+                long currentTime = System.currentTimeMillis();
                 firstStation = secondStation;
                 secondStation = destinationStationsOrder.poll();
 
@@ -76,8 +81,10 @@ public class Train extends Thread
                 while (!oppositeRailRoad.isRailRoadEmpty())
                     Thread.sleep(500);
 
-
                 currentRailRoad.addTrainOnRoad(this);
+                firstStation.removeParkedTrain(this); // remove from TrainStation parked train
+
+                trainHistory.addStationParkedTime(firstStation.getStationName(), System.currentTimeMillis() - currentTime);
 
                 Field railRoadField = currentRailRoad.getStartingField();
                 int currentX = railRoadField.getxPosition();
@@ -87,8 +94,7 @@ public class Train extends Thread
                 int previousX = stationField.getxPosition();
                 int previousY = stationField.getyPosition();
 
-                firstStation.removeParkedTrain(this); // remove from TrainStation parked train
-
+                trainHistory.addStationDepartureTime(firstStation.getStationName(), System.currentTimeMillis());
                 Field nextField = railRoadField;
                 while (!(nextField instanceof TrainStationField))
                 {
@@ -96,8 +102,12 @@ public class Train extends Thread
                     while (!"".equals(label.getText()))
                         Thread.sleep(trainSpeed);
 
-                    shiftBackTrainPosition(currentX, currentY);
-                    drawTrainOnMap();
+                    trainHistory.addPositionHistory(currentX, currentY);
+                    synchronized (RampWatcher.RAMP_LOCK)
+                    {
+                        shiftBackTrainPosition(currentX, currentY);
+                        drawTrainOnMap();
+                    }
                     Thread.sleep(trainSpeed); // Train speed here
 
                     nextField = Map.getNextField(currentX, currentY, previousX, previousY, RailField.class);
@@ -119,6 +129,21 @@ public class Train extends Thread
 
         if (currentRailRoad != null)
             currentRailRoad.removeTrainFromRailRoad(this);
+        secondStation.removeParkedTrain(this);
+
+        serializeTrainHistory(); //todo: save train hestory
+    }
+
+    private void serializeTrainHistory()
+    {
+        String path = TrainSpawner.trainHistoryDirPath + File.separator + trainName;
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path)))
+        {
+            oos.writeObject(trainHistory);
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     private void validateTrainAttributes() throws TrainWithoutPartsException, NoDestinationStationsException
@@ -151,14 +176,17 @@ public class Train extends Thread
 
     private void shiftBackTrainPosition(int currentX, int currentY)
     {
-        deleteLastTrainPartText();
-        for (int i = trainPartList.size() - 1; i > 0; i--)
+        synchronized (RampWatcher.RAMP_LOCK)
         {
-            TrainPart trainPart = trainPartList.get(i);
-            TrainPart trainPartBefore = trainPartList.get(i - 1);
-            trainPart.setPosition(trainPartBefore.getCurrentX(), trainPartBefore.getCurrentY());
+            deleteLastTrainPartText();
+            for (int i = trainPartList.size() - 1; i > 0; i--)
+            {
+                TrainPart trainPart = trainPartList.get(i);
+                TrainPart trainPartBefore = trainPartList.get(i - 1);
+                trainPart.setPosition(trainPartBefore.getCurrentX(), trainPartBefore.getCurrentY());
+            }
+            trainPartList.get(0).setPosition(currentX, currentY);
         }
-        trainPartList.get(0).setPosition(currentX, currentY);
     }
 
     private void deleteLastTrainPartText()
@@ -178,11 +206,20 @@ public class Train extends Thread
     {
         Platform.runLater(() ->
         {
+            boolean isFirstPart = true;
             for (var trainPart : trainPartList)
             {
                 var label = MapController.getGridCell(trainPart.getCurrentX(), trainPart.getCurrentY());
                 if (label != null)
-                    label.setText(trainPart.getPartName());
+                {
+                    String text = trainPart.getPartName();
+                    if (isFirstPart)
+                    {
+                        text += trainPartList.size();
+                        isFirstPart = false;
+                    }
+                    label.setText(text);
+                }
             }
         });
     }

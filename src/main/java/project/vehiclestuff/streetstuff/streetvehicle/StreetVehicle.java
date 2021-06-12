@@ -1,6 +1,7 @@
 package project.vehiclestuff.streetstuff.streetvehicle;
 
 import javafx.application.Platform;
+import project.Util.Utils;
 import project.map.Field.Field;
 import project.map.Field.RampField;
 import project.map.MapController;
@@ -8,7 +9,8 @@ import project.vehiclestuff.streetstuff.StreetRoad;
 
 public abstract class StreetVehicle extends Thread
 {
-    protected StreetRoad streetRoad;
+    public static final int SLOWEST_SPEED = 2000;
+    protected final StreetRoad streetRoad;
 
     private final int SPEED;
     private String mark;
@@ -19,7 +21,7 @@ public abstract class StreetVehicle extends Thread
     {
         setDaemon(true);
         this.streetRoad = streetRoad;
-        SPEED = speed;
+        SPEED = Utils.getRandomNumBetween(speed, SLOWEST_SPEED);
     }
 
     public abstract String getStreetVehicleName();
@@ -54,14 +56,17 @@ public abstract class StreetVehicle extends Thread
 
                 if (field instanceof RampField rampField)
                 {
-                    if (rampField.isClosed())
+                    synchronized (rampField.RAMP_LOCK)
                     {
-                        drawVehicle(secondX, secondY);
-                        while (rampField.isClosed())
+                        if (rampField.isClosed())
                         {
-                            Thread.sleep(SPEED);
+                            drawVehicle(secondX, secondY);
+                            while (rampField.isClosed())
+                            {
+                                rampField.RAMP_LOCK.wait();
+                            }
+                            removeVehicle(secondX, secondY);
                         }
-                        removeVehicle(secondX, secondY);
                     }
                 }
 

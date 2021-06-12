@@ -17,4 +17,14 @@ public class Truck extends StreetVehicle
     {
         return NAME;
     }
+
+    public double getWeightLimit()
+    {
+        return weightLimit;
+    }
+
+    public void setWeightLimit(double weightLimit)
+    {
+        this.weightLimit = weightLimit;
+    }
 }

@@ -1,7 +1,9 @@
 package project.spawners;
 
+import project.Util.GenericLogger;
 import project.Util.Utils;
 import project.constants.Constants;
+import project.exception.PropertyNotFoundException;
 import project.vehiclestuff.streetstuff.Street;
 import project.vehiclestuff.streetstuff.StreetRoad;
 import project.vehiclestuff.streetstuff.streetvehicle.Car;
@@ -23,7 +25,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 public class StreetVehicleSpawner extends Thread
 {
-    public static final int MINOR_DELAY = 300;
+    public static final int MINOR_DELAY = 200;
     private final int SPAWN_SPEED = 2000;
     private static final String MOVE_SPEED_PROP = "_speed";
     private static final String VEHICLE_NUM_PROP = "_num_of_cars";
@@ -36,7 +38,7 @@ public class StreetVehicleSpawner extends Thread
     private boolean isActive;
     private boolean isWatcherActive;
 
-    public StreetVehicleSpawner(List<Street> streets) throws IOException, URISyntaxException
+    public StreetVehicleSpawner(List<Street> streets) throws IOException, URISyntaxException, PropertyNotFoundException
     {
         setDaemon(true);
         this.streets = streets;
@@ -49,16 +51,22 @@ public class StreetVehicleSpawner extends Thread
         readStreetVehiclePropertyFile();
     }
 
-    private void readStreetVehiclePropertyFile()
+    private void readStreetVehiclePropertyFile() throws PropertyNotFoundException, ClassCastException
     {
         for (var street : streets)
         {
             synchronized (this)
             {
-                int streetSpeed = Integer.parseInt(properties.getProperty(street.getStreetName() + MOVE_SPEED_PROP));
+                String streetSpeedProp = properties.getProperty(street.getStreetName() + MOVE_SPEED_PROP);
+                if (streetSpeedProp == null)
+                    throw new PropertyNotFoundException(street.getStreetName() + MOVE_SPEED_PROP);
+                int streetSpeed = Integer.parseInt(streetSpeedProp);
                 street.setSpeedLimit(streetSpeed);
 
-                int propertieMaxNumOfVehicles = Integer.parseInt(properties.getProperty(street.getStreetName() + VEHICLE_NUM_PROP));
+                String maxNumOfVehicleProp = properties.getProperty(street.getStreetName() + VEHICLE_NUM_PROP);
+                if (maxNumOfVehicleProp == null)
+                    throw new PropertyNotFoundException(street.getStreetName() + VEHICLE_NUM_PROP);
+                int propertieMaxNumOfVehicles = Integer.parseInt(maxNumOfVehicleProp);
                 int currentMaxNumOfVehicles = street.getMaxNumOfVehicles();
                 if (propertieMaxNumOfVehicles > currentMaxNumOfVehicles)
                 {
@@ -103,9 +111,9 @@ public class StreetVehicleSpawner extends Thread
             }
 
             System.out.println("Closing StreetVehicleSpawner thread");
-        } catch (Exception ex)
+        } catch (InterruptedException ex)
         {
-            ex.printStackTrace();
+            GenericLogger.asyncLog(this.getClass(), ex);
         }
     }
 
@@ -139,6 +147,7 @@ public class StreetVehicleSpawner extends Thread
                         key = watcher.take();
                     } catch (InterruptedException ex)
                     {
+                        GenericLogger.asyncLog(this.getClass(), ex);
                         return;
                     }
 
@@ -156,7 +165,7 @@ public class StreetVehicleSpawner extends Thread
                                 Thread.sleep(MINOR_DELAY);
                             } catch (InterruptedException ex)
                             {
-                                ex.printStackTrace();
+                                GenericLogger.asyncLog(this.getClass(), ex);
                             }
                             properties = Utils.loadPropertie(Constants.CONFIGURATION_FILE);
                             readStreetVehiclePropertyFile();
@@ -171,9 +180,9 @@ public class StreetVehicleSpawner extends Thread
                     }
                 }
                 System.out.println("Closing " + directory.getName() + " file watcher");
-            } catch (IOException | URISyntaxException ex)
+            } catch (IOException | URISyntaxException | PropertyNotFoundException ex)
             {
-                System.err.println(ex);
+                GenericLogger.asyncLog(this.getClass(), ex);
             }
         }).start();
     }

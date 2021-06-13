@@ -1,6 +1,7 @@
 package project.vehiclestuff.streetstuff.streetvehicle;
 
 import javafx.application.Platform;
+import project.Util.GenericLogger;
 import project.Util.Utils;
 import project.map.Field.Field;
 import project.map.Field.RampField;
@@ -19,7 +20,6 @@ public abstract class StreetVehicle extends Thread
 
     public StreetVehicle(StreetRoad streetRoad, int speed)
     {
-        setDaemon(true);
         this.streetRoad = streetRoad;
         SPEED = Utils.getRandomNumBetween(speed, SLOWEST_SPEED);
     }
@@ -76,9 +76,9 @@ public abstract class StreetVehicle extends Thread
                 secondX = firstX;
                 secondY = firstY;
             }
-        } catch (InterruptedException e)
+        } catch (InterruptedException ex)
         {
-            e.printStackTrace();
+            GenericLogger.asyncLog(this.getClass(), ex);
         }
     }
 

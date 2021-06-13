@@ -1,2 +1,4 @@
 # Project exclude paths
 /target/
+/res/logs/
+/res/train_history/

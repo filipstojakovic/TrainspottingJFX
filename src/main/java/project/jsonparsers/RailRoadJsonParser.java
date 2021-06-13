@@ -3,6 +3,7 @@ package project.jsonparsers;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import project.Util.GenericLogger;
 import project.map.Field.Field;
 import project.map.Field.RampField;
 import project.map.Map;
@@ -33,12 +34,13 @@ public class RailRoadJsonParser extends JsonParser
 
                 } catch (ClassCastException ex)
                 {
-                    ex.printStackTrace();
+                    GenericLogger.asyncLog(RailRoadJsonParser.class, ex);
                 }
             }
         } catch (IOException | ParseException ex)
         {
-            ex.printStackTrace();
+            GenericLogger.asyncLog(RailRoadJsonParser.class, ex);
+            //ex.printStackTrace();
         }
         return railRoads;
     }

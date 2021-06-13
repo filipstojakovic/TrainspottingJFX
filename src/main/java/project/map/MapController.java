@@ -9,10 +9,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import project.Util.GenericLogger;
 import project.Util.LabelUtils;
 import project.constants.ColorConstants;
 import project.constants.Constants;
 import project.constants.FieldConstants;
+import project.exception.PropertyNotFoundException;
 import project.map.Field.*;
 import project.spawners.StreetVehicleSpawner;
 import project.spawners.TrainSpawner;
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 import static project.map.Map.DIM;
 
@@ -42,6 +45,7 @@ public class MapController implements Initializable
 
     private HashMap<String, TrainStation> trainStationMap;
     private List<Street> streets;
+    private List<RailRoad> railRoads;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
@@ -51,32 +55,45 @@ public class MapController implements Initializable
         {
             mapModel = new MapModel();
             initializeMap();
-            List<RailRoad> railRoads = mapModel.initRailRoads();
-            new RampWatcher(railRoads).start();
+            railRoads = mapModel.initRailRoads();
             trainStationMap = mapModel.initializeTrainStationMap(railRoads);
             streets = mapModel.initializeStreets();
 
         } catch (Exception ex)
         {
-            ex.printStackTrace();
+            GenericLogger.log(this.getClass(), Level.SEVERE, "Unable to load nessery components", ex);
             System.exit(1);
         }
         try
         {
             if (mapModel != null)
                 TrainSpawner.trainHistoryDirPath = mapModel.getTrainHistoryPathDir();
-        } catch (Exception ex)
+
+        } catch (PropertyNotFoundException ex)
         {
-            ex.printStackTrace();
+            GenericLogger.asyncLog(this.getClass(), Level.WARNING, "Unable to get TrainHistory folder path from popertie file", ex);
         }
     }
 
     private TrainSpawner trainSpawner;
     private StreetVehicleSpawner streetVehicleSpawner;
+    private RampWatcher rampWatcher;
 
     @FXML
     void onStartBtnClicked(ActionEvent event)
     {
+        try
+        {
+            if (rampWatcher != null)
+                rampWatcher.close();
+            rampWatcher = new RampWatcher(railRoads);
+            rampWatcher.start();
+        } catch (IllegalThreadStateException ex)
+        {
+            GenericLogger.asyncLog(this.getClass(), ex);
+        }
+
+
         try
         {
             if (trainSpawner != null)
@@ -84,9 +101,9 @@ public class MapController implements Initializable
             trainSpawner = mapModel.initTrainSpawner(trainStationMap);
             trainSpawner.getAllTrainsFromDirectory();
             trainSpawner.start();
-        } catch (URISyntaxException | FileNotFoundException e)
+        } catch (URISyntaxException | FileNotFoundException | PropertyNotFoundException ex)
         {
-            e.printStackTrace();
+            GenericLogger.asyncLog(this.getClass(), ex);
         }
 
         try
@@ -95,9 +112,9 @@ public class MapController implements Initializable
                 streetVehicleSpawner.close();
             streetVehicleSpawner = new StreetVehicleSpawner(streets);
             streetVehicleSpawner.start();
-        } catch (IOException | URISyntaxException ex)
+        } catch (IOException | URISyntaxException | PropertyNotFoundException ex)
         {
-            ex.printStackTrace();
+            GenericLogger.asyncLog(this.getClass(), ex);
         }
     }
 
@@ -119,14 +136,14 @@ public class MapController implements Initializable
             Parent root = (Parent) loader.load();
 
             movementDialogStage = new Stage();
-            movementDialogStage.setTitle("Movement information");
+            movementDialogStage.setTitle("Trains history dialog");
             movementDialogStage.setScene(new Scene(root));
             movementDialogStage.show();
             // Hide this current window (if this is what you want)
             //((Node)(event.getSource())).getScene().getWindow().hide();
-        } catch (IOException e)
+        } catch (IOException ex)
         {
-            e.printStackTrace();
+            GenericLogger.asyncLog(this.getClass(), Level.SEVERE, "Unable to open DialogView.fxml", ex);
         }
     }
 

@@ -10,9 +10,13 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import project.Util.GenericLogger;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 public class MovementDialogController implements Initializable, EventHandler<MouseEvent>
 {
@@ -48,9 +52,9 @@ public class MovementDialogController implements Initializable, EventHandler<Mou
                 });
             });
 
-        } catch (Exception ex)
+        } catch (IOException | URISyntaxException ex)
         {
-            ex.printStackTrace();
+            GenericLogger.asyncLog(this.getClass(), Level.WARNING, "Unable to start Movement Dialog correctly" + getClass(), ex);
         }
     }
 

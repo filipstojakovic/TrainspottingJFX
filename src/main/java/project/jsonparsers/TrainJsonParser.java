@@ -3,6 +3,7 @@ package project.jsonparsers;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import project.Util.GenericLogger;
 import project.exception.TrainNotValidException;
 import project.vehiclestuff.trainstuff.Train;
 import project.vehiclestuff.trainstuff.TrainPart;
@@ -69,10 +70,10 @@ public class TrainJsonParser extends JsonParser
             train.setDestinationStationsOrder(stationsOrder);
             train.setTrainPartList(trainPartList);
 
-        } catch (ParseException | IOException | TrainNotValidException | IllegalArgumentException e)
+        } catch (ParseException | IOException | TrainNotValidException | IllegalArgumentException ex)
         {
+            GenericLogger.asyncLog(TrainJsonParser.class, ex);
             train = null;
-            e.printStackTrace();
         }
 
         return train;
@@ -107,8 +108,8 @@ public class TrainJsonParser extends JsonParser
 
         else if (CargoWagon.class.getSimpleName().equals(className))
             return new CargoWagon();
-        else if (PassengerBadWagon.class.getSimpleName().equals(className))
-            return new PassengerBadWagon();
+        else if (PassengerBedWagon.class.getSimpleName().equals(className))
+            return new PassengerBedWagon();
         else if (PassengerRestaurantWagon.class.getSimpleName().equals(className))
             return new PassengerRestaurantWagon();
         else if (PassengerSeatWagon.class.getSimpleName().equals(className))

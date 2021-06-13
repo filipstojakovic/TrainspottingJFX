@@ -1,8 +1,10 @@
 package project.movementdialog;
 
 import javafx.application.Platform;
+import project.Util.GenericLogger;
 import project.Util.Utils;
 import project.constants.Constants;
+import project.exception.PropertyNotFoundException;
 import project.vehiclestuff.trainstuff.TrainHistory;
 
 import java.io.File;
@@ -31,7 +33,18 @@ public class MovementDialogModel
     {
         new Thread(() ->
         {
-            String trainsDir = properties.getProperty(TRAIN_HISTORY_DIR_PROP);
+            String trainsDir;
+            try
+            {
+                trainsDir = properties.getProperty(TRAIN_HISTORY_DIR_PROP);
+                if (trainsDir == null)
+                    throw new PropertyNotFoundException(TRAIN_HISTORY_DIR_PROP);
+            } catch (PropertyNotFoundException ex)
+            {
+                GenericLogger.asyncLog(this.getClass(), ex);
+                return;
+            }
+
             Utils.createFolderIfNotExists(trainsDir);
             File directory = new File(trainsDir);
             var files = directory.listFiles();
@@ -50,7 +63,18 @@ public class MovementDialogModel
     {
         new Thread(() ->
         {
-            String trainsDir = properties.getProperty(TRAIN_HISTORY_DIR_PROP);
+            String trainsDir;
+            try
+            {
+                trainsDir = properties.getProperty(TRAIN_HISTORY_DIR_PROP);
+                if (trainsDir == null)
+                    throw new PropertyNotFoundException(TRAIN_HISTORY_DIR_PROP);
+            } catch (PropertyNotFoundException ex)
+            {
+                GenericLogger.asyncLog(this.getClass(), ex);
+                return;
+            }
+
             String filePath = trainsDir + File.separator + fileName;
 
             try (ObjectInputStream oos = new ObjectInputStream(new FileInputStream(filePath)))
@@ -58,9 +82,10 @@ public class MovementDialogModel
                 TrainHistory trainHistory = (TrainHistory) oos.readObject();
                 String details = trainHistory.toString();
                 Platform.runLater(() -> function.accept(details));
-            } catch (Exception ex)
+
+            } catch (IOException | ClassNotFoundException ex)
             {
-                ex.printStackTrace();
+                GenericLogger.asyncLog(this.getClass(), ex);
             }
         }).start();
     }

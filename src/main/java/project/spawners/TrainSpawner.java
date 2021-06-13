@@ -1,5 +1,6 @@
 package project.spawners;
 
+import project.Util.GenericLogger;
 import project.Util.Utils;
 import project.exception.TrainNotValidException;
 import project.jsonparsers.TrainJsonParser;
@@ -27,6 +28,7 @@ public class TrainSpawner extends Thread
 
     public TrainSpawner(String directoryPath, HashMap<String, TrainStation> trainStationMap)
     {
+        setDaemon(true);
         visitedFileNames = new ArrayList<>();
         Utils.createFolderIfNotExists(directoryPath);
         watchDirectoryFile = new File(directoryPath);
@@ -52,6 +54,7 @@ public class TrainSpawner extends Thread
                     key = watcher.take();
                 } catch (InterruptedException ex)
                 {
+                    GenericLogger.asyncLog(this.getClass(), ex);
                     return;
                 }
 
@@ -77,7 +80,7 @@ public class TrainSpawner extends Thread
 
                         } catch (InterruptedException | TrainNotValidException ex)
                         {
-                            ex.printStackTrace();
+                            GenericLogger.asyncLog(this.getClass(), ex);
                         }
 
                     }
@@ -91,7 +94,7 @@ public class TrainSpawner extends Thread
 
         } catch (IOException ex)
         {
-            System.err.println(ex);
+            GenericLogger.asyncLog(this.getClass(), ex);
         }
     }
 
@@ -117,9 +120,9 @@ public class TrainSpawner extends Thread
                             train.start();
 
                     }
-                } catch (InterruptedException | TrainNotValidException e)
+                } catch (InterruptedException | TrainNotValidException ex)
                 {
-                    e.printStackTrace();
+                    GenericLogger.asyncLog(this.getClass(), ex);
                 }
             }
         }).start();

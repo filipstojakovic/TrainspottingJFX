@@ -2,10 +2,13 @@ package project.vehiclestuff.trainstuff;
 
 import javafx.application.Platform;
 import javafx.scene.control.Label;
+import project.Util.GenericLogger;
+import project.Util.Utils;
 import project.exception.NoDestinationStationsException;
 import project.exception.TrainWithoutPartsException;
 import project.map.Field.Field;
 import project.map.Field.RailField;
+import project.map.Field.RampField;
 import project.map.Field.TrainStationField;
 import project.map.Map;
 import project.map.MapController;
@@ -30,12 +33,9 @@ public class Train extends Thread
     private int trainSpeed;
     private boolean isElectric = false; //true if there is a Locomotive with Electric Engine
 
-    public static int i = 0;
-
     public Train(String trainName)
     {
         this.trainName = trainName;
-        setDaemon(true);
     }
 
     public String getTrainName()
@@ -49,18 +49,14 @@ public class Train extends Thread
         try
         {
             validateTrainAttributes();
-            moveableParts = new ArrayList<>();
-            if (isElectric)
-                moveableParts.add(new ElectricField());
-            moveableParts.addAll(trainPartList);
-            if (isElectric)
-                moveableParts.add(new ElectricField());
 
         } catch (TrainWithoutPartsException | NoDestinationStationsException ex)
         {
-            ex.printStackTrace();
+            GenericLogger.asyncLog(this.getClass(), ex);
             return;
         }
+        constructMoveableParts();
+
         final TrainHistory trainHistory = new TrainHistory();
         final TrainStation beginingStation = destinationStationsOrder.poll();
         beginingStation.addParkedTrain(this);
@@ -82,7 +78,7 @@ public class Train extends Thread
                 oppositeRailRoad = getRailRoadBetweenStations(secondStation, firstStation);
 
                 while (!oppositeRailRoad.isRailRoadEmpty())
-                    Thread.sleep(500);
+                    Thread.sleep(trainSpeed);
 
                 currentRailRoad.addTrainOnRoad(this);
                 firstStation.removeParkedTrain(this); // remove from TrainStation parked train
@@ -122,9 +118,9 @@ public class Train extends Thread
                 currentRailRoad.removeTrainFromRailRoad(this);
             }
 
-        } catch (Exception ex)
+        } catch (InterruptedException ex)
         {
-            ex.printStackTrace();
+            GenericLogger.asyncLog(this.getClass(), ex);
         }
 
         if (currentRailRoad != null)
@@ -134,15 +130,26 @@ public class Train extends Thread
         serializeTrainHistory(trainHistory);
     }
 
+    private void constructMoveableParts()
+    {
+        moveableParts = new ArrayList<>();
+        if (isElectric)
+            moveableParts.add(new ElectricField());
+        moveableParts.addAll(trainPartList);
+        if (isElectric)
+            moveableParts.add(new ElectricField());
+    }
+
     private void serializeTrainHistory(TrainHistory trainHistory)
     {
+        Utils.createFolderIfNotExists(TrainSpawner.trainHistoryDirPath);
         String path = TrainSpawner.trainHistoryDirPath + File.separator + trainName;
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path)))
         {
             oos.writeObject(trainHistory);
         } catch (IOException ex)
         {
-            ex.printStackTrace();
+            GenericLogger.asyncLog(this.getClass(), ex);
         }
     }
 
@@ -192,8 +199,10 @@ public class Train extends Thread
     private void deleteLastTrainPartText()
     {
         var lastField = moveableParts.get(moveableParts.size() - 1);
-        int xPosition = lastField.getCurrentX();
-        int yPosition = lastField.getCurrentY();
+        final int xPosition = lastField.getCurrentX();
+        final int yPosition = lastField.getCurrentY();
+        if (isElectric)
+            setFieldElectricity(xPosition, yPosition, false);
         Platform.runLater(() ->
         {
             var label = MapController.getGridCell(xPosition, yPosition);
@@ -209,19 +218,42 @@ public class Train extends Thread
             boolean isFirstPart = true;
             for (var trainPart : moveableParts)
             {
-                var label = MapController.getGridCell(trainPart.getCurrentX(), trainPart.getCurrentY());
-                if (label != null)
-                {
-                    String text = trainPart.getPartName();
-                    if (isFirstPart && trainPart instanceof TrainPart)
-                    {
-                        text += trainPartList.size();
-                        isFirstPart = false;
-                    }
-                    label.setText(text);
-                }
+                final int xPosition = trainPart.getCurrentX();
+                final int yPosition = trainPart.getCurrentY();
+                isFirstPart = drawTrainPartOnMap(isFirstPart, trainPart, xPosition, yPosition);
+                if (isElectric)
+                    setFieldElectricity(xPosition, yPosition, true);
             }
         });
+    }
+
+    private void setFieldElectricity(int x, int y, boolean hasElectricity)
+    {
+        Field field = Map.getField(x, y);
+        if (field instanceof RailField railField)
+        {
+            railField.setHasElectricity(hasElectricity);
+
+        } else if (field instanceof RampField rampField)
+        {
+            rampField.setHasElectricity(hasElectricity);
+        }
+    }
+
+    private boolean drawTrainPartOnMap(boolean isFirstPart, IMoveable trainPart, int xPosition, int yPosition)
+    {
+        var label = MapController.getGridCell(xPosition, yPosition);
+        if (label != null)
+        {
+            String text = trainPart.getPartName();
+            if (isFirstPart && trainPart instanceof TrainPart)
+            {
+                text += trainPartList.size();
+                isFirstPart = false;
+            }
+            label.setText(text);
+        }
+        return isFirstPart;
     }
 
     public Queue<TrainStation> getDestinationStationsOrder()

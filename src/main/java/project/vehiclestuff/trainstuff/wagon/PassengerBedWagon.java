@@ -1,11 +1,11 @@
 package project.vehiclestuff.trainstuff.wagon;
 
-public class PassengerBadWagon extends PassengerWagon
+public class PassengerBedWagon extends PassengerWagon
 {
     public static final String NAME = "PBW";
     public Integer passengerSpace;
 
-    public PassengerBadWagon()
+    public PassengerBedWagon()
     {
     }
 

@@ -1,6 +1,7 @@
 package project.map;
 
 import javafx.application.Platform;
+import project.Util.GenericLogger;
 import project.Util.LabelUtils;
 import project.constants.ColorConstants;
 import project.map.Field.RampField;
@@ -47,13 +48,14 @@ public class RampWatcher extends Thread
                     synchronized (ramp.RAMP_LOCK)
                     {
                         final boolean close = shouldClose;
+
+                        ramp.setClosed(shouldClose);
                         Platform.runLater(() ->
                         {
                             var lbl = MapController.getGridCell(ramp.getxPosition(), ramp.getyPosition());
-                            LabelUtils.setLableBackgroundAndBorderColor(lbl, close ? ColorConstants.RED : ColorConstants.BLACK);
+                            if (lbl != null)
+                                LabelUtils.setLableBackgroundAndBorderColor(lbl, close ? ColorConstants.RED : ColorConstants.BLACK);
                         });
-
-                        ramp.setClosed(shouldClose);
                         ramp.RAMP_LOCK.notify();
                     }
                 });
@@ -61,9 +63,9 @@ public class RampWatcher extends Thread
             try
             {
                 Thread.sleep(MINOR_DELAY);
-            } catch (Exception ex)
+            } catch (InterruptedException ex)
             {
-                ex.printStackTrace();
+                GenericLogger.asyncLog(this.getClass(), ex);
             }
 
         }
@@ -100,5 +102,10 @@ public class RampWatcher extends Thread
     public void setActive(boolean active)
     {
         isActive = active;
+    }
+
+    public void close()
+    {
+        isActive = false;
     }
 }

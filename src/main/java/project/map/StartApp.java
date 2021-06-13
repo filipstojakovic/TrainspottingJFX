@@ -6,7 +6,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import project.Util.GenericLogger;
 import project.Util.Utils;
+
+import java.io.IOException;
+import java.util.logging.Level;
 
 public class StartApp extends Application implements EventHandler<WindowEvent>
 {
@@ -28,9 +32,9 @@ public class StartApp extends Application implements EventHandler<WindowEvent>
             primaryStage.setOnCloseRequest(this); // call public void handle()
             primaryStage.show();
 
-        } catch (Exception ex)
+        } catch (IOException ex)
         {
-            ex.printStackTrace();
+            GenericLogger.asyncLog(getClass(), Level.SEVERE, "Unable to open MapView.fxml file", ex);
         }
     }
 

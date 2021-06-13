@@ -35,10 +35,21 @@ public abstract class GenericLogger
                 logger.addHandler(handler);
                 logger.log(level, msg, thrown);
                 handler.close();
+
             } catch (IOException ex)
             {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public static void asyncLog(Class<?> C, Exception ex)
+    {
+        GenericLogger.asyncLog(C, Level.WARNING, ex.fillInStackTrace().toString(), ex);
+    }
+
+    public static void asyncLog(Class<?> C, Level level, String msg, Throwable thrown)
+    {
+        new Thread(() -> GenericLogger.log(C, level, msg, thrown)).start();
     }
 }

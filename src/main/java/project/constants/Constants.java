@@ -30,7 +30,7 @@ public abstract class Constants
                     ManeuverLocomotive.NAME + SPLITTER + "Maneuver Locomotive\n" +
                     UniversalLocomotive.NAME + SPLITTER + "Universal Locomotive\n" +
                     '\n' +
-                    PassengerBadWagon.NAME + SPLITTER + "Passenger Bad Wagon\n" +
+                    PassengerBedWagon.NAME + SPLITTER + "Passenger Bed Wagon\n" +
                     PassengerRestaurantWagon.NAME + SPLITTER + "Passenger Restaurant Wagon\n" +
                     PassengerSeatWagon.NAME + SPLITTER + "Passenger Seat Wagon\n" +
                     PassengerSleepWagon.NAME + SPLITTER + "Passenger Sleep Wagon\n" +

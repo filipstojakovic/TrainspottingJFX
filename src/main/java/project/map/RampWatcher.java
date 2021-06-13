@@ -1,5 +1,8 @@
 package project.map;
 
+import javafx.application.Platform;
+import project.Util.LabelUtils;
+import project.constants.ColorConstants;
 import project.map.Field.RampField;
 import project.vehiclestuff.trainstuff.RailRoad;
 
@@ -27,22 +30,46 @@ public class RampWatcher extends Thread
             for (RailRoad railRoad : railRoads)
             {
                 RailRoad opositeRoad = railRoads.stream()
-                        .filter(x -> railRoad.getStartStationName().equals(x.getEndStationName()))
+                        .filter(x ->
+                        {
+                            String startName = railRoad.getStartStationName();
+                            String endName = railRoad.getEndStationName();
+                            return startName.equals(x.getEndStationName()) && endName.equals(x.getStartStationName());
+                        })
                         .findFirst().get();
 
                 boolean shouldClose;
-                synchronized (RAMP_LOCK)
+                synchronized (railRoad)
                 {
-                    shouldClose = shouldCloseRampOnRailRoad(railRoad) || shouldCloseRampOnRailRoad(opositeRoad);
-                    railRoad.getRamps().forEach(x -> x.setClosed(shouldClose));
-                    railRoad.getRamps().forEach(x ->
+                    synchronized (opositeRoad)
                     {
-                        synchronized (x.RAMP_LOCK)
+                        shouldClose = shouldCloseRampOnRailRoad(railRoad) || shouldCloseRampOnRailRoad(opositeRoad);
+                        railRoad.getRamps().forEach(ramp ->
                         {
-                            x.RAMP_LOCK.notify();
-                        }
-                    });
+                            synchronized (ramp.RAMP_LOCK)
+                            {
+                                final boolean close = shouldClose;
+                                Platform.runLater(() ->
+                                {
+                                    var lbl = MapController.getGridCell(ramp.getxPosition(), ramp.getyPosition());
+                                    LabelUtils.setLableBackgroundAndBorderColor(lbl, close ? ColorConstants.RED : ColorConstants.BLACK);
+                                });
+
+                                ramp.setClosed(shouldClose);
+                                ramp.RAMP_LOCK.notify();
+                            }
+
+                        });
+                    }
                 }
+                try
+                {
+                    Thread.sleep(10);
+                } catch (Exception ex)
+                {
+                    ex.printStackTrace();
+                }
+
             }
         }
     }

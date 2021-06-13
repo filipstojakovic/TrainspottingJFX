@@ -5,7 +5,7 @@ import project.vehiclestuff.trainstuff.trainpartinterface.IUniversal;
 
 public class SpecialUseWagon extends Wagon implements IUniversal, IManeuver
 {
-    private final String NAME = "SUW";
+    public static final String NAME = "SUW";
 
     public SpecialUseWagon()
     {

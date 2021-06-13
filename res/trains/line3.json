@@ -1,5 +1,5 @@
 {
-  "train_speed": 2000,
+  "train_speed": 1000,
 
   "stationOrder": [
     "D",
@@ -9,19 +9,19 @@
   ],
   "train_parts": [
     {
-      "type": "PassengerLocomotive",
+      "part_type": "PassengerLocomotive",
       "engine": "steam"
     },
     {
-      "type": "CargoLocomotive",
+      "part_type": "CargoLocomotive",
       "engine": "steam"
     },
     {
-      "type": "UniversalLocomotive",
+      "part_type": "UniversalLocomotive",
       "engine": "steam"
     },
     {
-      "type": "PassengerLocomotive",
+      "part_type": "PassengerLocomotive",
       "engine": "steam"
     }
   ]

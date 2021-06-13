@@ -4,7 +4,7 @@ import project.vehiclestuff.trainstuff.trainpartinterface.IManeuver;
 
 public class ManeuverLocomotive extends Locomotive implements IManeuver
 {
-	private final String NAME = "ML";
+	public static final String NAME = "ML";
 
 	public ManeuverLocomotive() {
 	}

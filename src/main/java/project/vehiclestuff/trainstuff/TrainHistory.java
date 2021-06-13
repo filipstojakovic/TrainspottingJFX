@@ -9,7 +9,8 @@ import java.util.concurrent.TimeUnit;
 
 public class TrainHistory implements Serializable
 {
-    @Serial private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
     private static final String ARROW = " -> ";
 
     static class Position implements Serializable
@@ -27,7 +28,6 @@ public class TrainHistory implements Serializable
     private List<Position> positionsHistory;
     private HashMap<String, Long> stationsDepartureTime;
     private HashMap<String, Long> stationsParkedTime;
-
 
     public TrainHistory()
     {
@@ -60,13 +60,15 @@ public class TrainHistory implements Serializable
     public String toString()
     {
 
-        return departureTimeString() + "\n" +
-                parkedTimeDurationString() + "\n" +
+        return  departureTimeString() +
+                parkedTimeDurationString() +
                 pathHistoryString();
     }
 
     private String departureTimeString()
     {
+        if (stationsDepartureTime.isEmpty())
+            return "";
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Departure from station times:\n");
         for (var stationDepartureTime : stationsDepartureTime.entrySet())
@@ -75,11 +77,14 @@ public class TrainHistory implements Serializable
                     .append(" departed at: ").append(Utils.formatDate(stationDepartureTime.getValue()))
                     .append("\n");
         }
+        stringBuilder.append("\n");
         return stringBuilder.toString();
     }
 
     private String parkedTimeDurationString()
     {
+        if (stationsParkedTime.isEmpty())
+            return "";
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Stations parked time duration:\n");
         for (var stationParkedTime : stationsParkedTime.entrySet())
@@ -88,13 +93,17 @@ public class TrainHistory implements Serializable
             stringBuilder.append("on Station ").append(stationParkedTime.getKey()).append(": ")
                     .append(seconds).append(" seconds\n");
         }
+        stringBuilder.append("\n");
         return stringBuilder.toString();
     }
 
     private String pathHistoryString()
     {
+        if (positionsHistory.isEmpty())
+            return "Train didn't even move";
+
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Path history:\n");
+        stringBuilder.append("Path history (" + positionsHistory.size() + " fields):\n");
         for (var position : positionsHistory)
         {
             stringBuilder.append("(").append(position.x).append(",").append(position.y).append(")").append(ARROW);

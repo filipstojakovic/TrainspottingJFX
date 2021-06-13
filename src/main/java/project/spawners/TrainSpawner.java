@@ -113,7 +113,8 @@ public class TrainSpawner extends Thread
                     {
                         Thread.sleep(MINOR_DELAY);
                         Train train = getTrainFromFile(file.toPath());
-                        train.start();
+                        if (train != null)
+                            train.start();
 
                     }
                 } catch (InterruptedException | TrainNotValidException e)
@@ -127,9 +128,9 @@ public class TrainSpawner extends Thread
     private Train getTrainFromFile(Path filePath) throws TrainNotValidException
     {
         Train train = TrainJsonParser.getTrainPartsFromJson(trainStationMap, filePath.toString());
-
         validateTrain(train);
         //TODO: validate train
+        // can it reach destination station
         return train;
     }
 

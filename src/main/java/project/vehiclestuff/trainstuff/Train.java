@@ -9,12 +9,12 @@ import project.map.Field.RailField;
 import project.map.Field.TrainStationField;
 import project.map.Map;
 import project.map.MapController;
-import project.map.RampWatcher;
 import project.spawners.TrainSpawner;
 import project.vehiclestuff.trainstuff.trainstation.TrainStation;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +28,7 @@ public class Train extends Thread
     private List<TrainPart> trainPartList;
     private List<IMoveable> moveableParts;
     private int trainSpeed;
-    private boolean isElectric = true; // if there is a Locomotive with Electric Engine
-    private TrainHistory trainHistory;
+    private boolean isElectric = false; //true if there is a Locomotive with Electric Engine
 
     public static int i = 0;
 
@@ -37,7 +36,6 @@ public class Train extends Thread
     {
         this.trainName = trainName;
         setDaemon(true);
-        trainHistory = new TrainHistory(); //TODO: add my stuff
     }
 
     public String getTrainName()
@@ -63,15 +61,12 @@ public class Train extends Thread
             ex.printStackTrace();
             return;
         }
-        //TODO: check parking in station
-
+        final TrainHistory trainHistory = new TrainHistory();
         final TrainStation beginingStation = destinationStationsOrder.poll();
         beginingStation.addParkedTrain(this);
 
-
         TrainStation firstStation;
         TrainStation secondStation = beginingStation;
-
 
         RailRoad currentRailRoad = null;
         RailRoad oppositeRailRoad = null;
@@ -111,7 +106,7 @@ public class Train extends Thread
                         Thread.sleep(trainSpeed);
 
                     trainHistory.addPositionHistory(currentX, currentY);
-                    synchronized (RampWatcher.RAMP_LOCK)
+                    synchronized (currentRailRoad)
                     {
                         shiftBackTrainPosition(currentX, currentY);
                         drawTrainOnMap();
@@ -125,7 +120,7 @@ public class Train extends Thread
                     currentY = nextField.getyPosition();
                 }
 
-                parkTrainInStation(); // TODO: method to park in TrainStation parkedTrainList
+                parkTrainInStation();
                 secondStation.addParkedTrain(this);
                 currentRailRoad.removeTrainFromRailRoad(this);
             }
@@ -139,16 +134,16 @@ public class Train extends Thread
             currentRailRoad.removeTrainFromRailRoad(this);
         secondStation.removeParkedTrain(this);
 
-        serializeTrainHistory(); //todo: save train hestory
+        serializeTrainHistory(trainHistory);
     }
 
-    private void serializeTrainHistory()
+    private void serializeTrainHistory(TrainHistory trainHistory)
     {
         String path = TrainSpawner.trainHistoryDirPath + File.separator + trainName;
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path)))
         {
             oos.writeObject(trainHistory);
-        } catch (Exception ex)
+        } catch (IOException ex)
         {
             ex.printStackTrace();
         }
@@ -161,6 +156,9 @@ public class Train extends Thread
 
         if (destinationStationsOrder == null || destinationStationsOrder.isEmpty())
             throw new NoDestinationStationsException();
+
+        //var firstStation = destinationStationsOrder.poll();
+
     }
 
     private void parkTrainInStation() throws InterruptedException
@@ -184,17 +182,14 @@ public class Train extends Thread
 
     private void shiftBackTrainPosition(int currentX, int currentY)
     {
-        synchronized (RampWatcher.RAMP_LOCK)
+        deleteLastTrainPartText();
+        for (int i = moveableParts.size() - 1; i > 0; i--)
         {
-            deleteLastTrainPartText();
-            for (int i = moveableParts.size() - 1; i > 0; i--)
-            {
-                var trainPart = moveableParts.get(i);
-                var trainPartBefore = moveableParts.get(i - 1);
-                trainPart.setPosition(trainPartBefore.getCurrentX(), trainPartBefore.getCurrentY());
-            }
-            moveableParts.get(0).setPosition(currentX, currentY);
+            var trainPart = moveableParts.get(i);
+            var trainPartBefore = moveableParts.get(i - 1);
+            trainPart.setPosition(trainPartBefore.getCurrentX(), trainPartBefore.getCurrentY());
         }
+        moveableParts.get(0).setPosition(currentX, currentY);
     }
 
     private void deleteLastTrainPartText()
@@ -242,19 +237,19 @@ public class Train extends Thread
         this.destinationStationsOrder = destinationStationsOrder;
     }
 
-    public List<TrainPart> getTrainPartList()
+    public boolean isElectric()
     {
-        return trainPartList;
+        return isElectric;
+    }
+
+    public void setElectric(boolean electric)
+    {
+        isElectric = electric;
     }
 
     public void setTrainPartList(List<TrainPart> trainPartList)
     {
         this.trainPartList = trainPartList;
-    }
-
-    public int getTrainSpeed()
-    {
-        return trainSpeed;
     }
 
     public void setTrainSpeed(int trainSpeed)
@@ -277,5 +272,4 @@ public class Train extends Thread
     {
         return Objects.hash(destinationStationsOrder, trainPartList, isElectric);
     }
-
 }

@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class ElectricField implements IMoveable
 {
-    private static final String THUNDER = "⚡";
+    public static final String THUNDER = "⚡⚡";
 
     protected int currentX = -1;
     protected int currentY = -1;

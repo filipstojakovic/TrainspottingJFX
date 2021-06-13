@@ -4,7 +4,7 @@ import project.vehiclestuff.trainstuff.trainpartinterface.IUniversal;
 
 public class UniversalLocomotive extends Locomotive implements IUniversal
 {
-	private final String NAME = "UL";
+	public static final String NAME = "UL";
 
 	public UniversalLocomotive() {
 	}

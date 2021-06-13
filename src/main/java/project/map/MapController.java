@@ -141,7 +141,7 @@ public class MapController implements Initializable
     private void initializeMap() throws Exception
     {
         mapPane = gridPane;
-
+        //gridPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         List<List<String>> mapValues = mapModel.getMap();
 
         Map.mapFields = new ArrayList<>();

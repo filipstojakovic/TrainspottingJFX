@@ -2,11 +2,13 @@ package project.jsonparsers;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 import project.map.Field.Field;
 import project.map.Field.RampField;
 import project.map.Map;
 import project.vehiclestuff.trainstuff.RailRoad;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,12 +31,12 @@ public class RailRoadJsonParser extends JsonParser
                     railRoads.add(trainLine);
                     railRoads.add(trainLine.createReverseLine());
 
-                } catch (Exception ex)
+                } catch (ClassCastException ex)
                 {
                     ex.printStackTrace();
                 }
             }
-        } catch (Exception ex)
+        } catch (IOException | ParseException ex)
         {
             ex.printStackTrace();
         }
@@ -50,9 +52,9 @@ public class RailRoadJsonParser extends JsonParser
         List<RampField> ramps = new ArrayList<>();
 
         JSONArray lineJsonArray = (JSONArray) jsonObject.get("line");
-        for (int i = 0; i < lineJsonArray.size(); i++)
+        for (Object obj : lineJsonArray)
         {
-            JSONObject fieldJson = (JSONObject) lineJsonArray.get(i);
+            JSONObject fieldJson = (JSONObject) obj;
 
             int xPosition = ((Long) fieldJson.get("xPosition")).intValue();
             int yPosition = ((Long) fieldJson.get("yPosition")).intValue();

@@ -3,12 +3,10 @@ package project.jsonparsers;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import project.exception.TrainNotValidException;
 import project.vehiclestuff.trainstuff.Train;
 import project.vehiclestuff.trainstuff.TrainPart;
-import project.vehiclestuff.trainstuff.locomotive.CargoLocomotive;
-import project.vehiclestuff.trainstuff.locomotive.ManeuverLocomotive;
-import project.vehiclestuff.trainstuff.locomotive.PassengerLocomotive;
-import project.vehiclestuff.trainstuff.locomotive.UniversalLocomotive;
+import project.vehiclestuff.trainstuff.locomotive.*;
 import project.vehiclestuff.trainstuff.trainstation.TrainStation;
 import project.vehiclestuff.trainstuff.wagon.*;
 
@@ -20,8 +18,9 @@ public class TrainJsonParser extends JsonParser
 {
     public static final String TRAIN_SPEED = "train_speed";
     public static final String TRAIN_PARTS = "train_parts";
-    public static final String TYPE = "type";
+    public static final String PART_TYPE = "part_type";
     public static final String STATION_ORDER = "stationOrder";
+    public static final String ENGINE = "engine";
 
     public static final int MIN_TRAIN_SPEED = 500;
 
@@ -35,8 +34,9 @@ public class TrainJsonParser extends JsonParser
             train = new Train(file.getName());
 
             int trainSpeed = ((Long) obj.get(TRAIN_SPEED)).intValue();
-            //if (trainSpeed < MIN_TRAIN_SPEED)
-            //    throw new TrainNotValidException("Train speed is set to " + trainSpeed + " (minimal speed is " + MIN_TRAIN_SPEED + ")");
+
+            if (trainSpeed < MIN_TRAIN_SPEED)
+                throw new TrainNotValidException("Train speed is set to " + trainSpeed + " (minimal speed is " + MIN_TRAIN_SPEED + ")");
             train.setTrainSpeed(trainSpeed);
 
             List<TrainPart> trainPartList = new ArrayList<>();
@@ -44,10 +44,23 @@ public class TrainJsonParser extends JsonParser
             for (Object arrayObject : jsonArray)
             {
                 JSONObject jsonObject = (JSONObject) arrayObject;
-                TrainPart trainPart = getTrainPartByClassName((String) jsonObject.get(TYPE));
-                //if(trainPart instanceof Locomotive)
-                //todo: if locomotive need Engine
-                //train signature
+                TrainPart trainPart = getTrainPartByClassName((String) jsonObject.get(PART_TYPE));
+                if (trainPart instanceof Locomotive locomotive && jsonObject.containsKey(ENGINE))
+                {
+                    String engine = ((String) jsonObject.get(ENGINE)).toLowerCase().trim();
+                    EngineEnum engineEnum;
+                    try
+                    {
+                        engineEnum = EngineEnum.valueOf(engine); // throws IllegalArgumentException
+                        if (EngineEnum.electric.equals(engineEnum))
+                            train.setElectric(true);
+                    } catch (IllegalArgumentException e)
+                    {
+                        throw new TrainNotValidException("Unknown locomotive engine type");
+                    }
+                    locomotive.setEngine(engineEnum);
+
+                }
                 trainPartList.add(trainPart);
             }
 
@@ -56,7 +69,7 @@ public class TrainJsonParser extends JsonParser
             train.setDestinationStationsOrder(stationsOrder);
             train.setTrainPartList(trainPartList);
 
-        } catch (ParseException | IOException e)
+        } catch (ParseException | IOException | TrainNotValidException | IllegalArgumentException e)
         {
             train = null;
             e.printStackTrace();
@@ -69,9 +82,9 @@ public class TrainJsonParser extends JsonParser
     {
         Queue<TrainStation> destinationOrder = new LinkedList<>();
         JSONArray jsonArray = (JSONArray) obj.get(STATION_ORDER);
-        for (int i = 0; i < jsonArray.size(); i++)
+        for (Object o : jsonArray)
         {
-            String stationName = (String) jsonArray.get(i);
+            String stationName = (String) o;
             destinationOrder.add(trainstationHashMap.get(stationName));
         }
         return destinationOrder;

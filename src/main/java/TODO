@@ -9,3 +9,12 @@ TODO: polja za elektricno voz
 TODO: movement dialog prozor
 TODO: when train cant get to station
 
+
+putnicka i univerzelana voze: putnicke vagone
+teretna i univerzalana : teretne vagone
+univerzalna i manvevarska: special use wagon
+
+putnicki: putnicki vagon
+teretni: teretni vagon
+univerzalni: putnicke, teretne, special use
+manevarksa: special use

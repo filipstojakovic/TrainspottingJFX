@@ -2,7 +2,7 @@ package project.vehiclestuff.trainstuff.wagon;
 
 public class PassengerRestaurantWagon extends PassengerWagon
 {
-    private final String NAME = "PRW";
+    public static final String NAME = "PRW";
 
     public String description;
 

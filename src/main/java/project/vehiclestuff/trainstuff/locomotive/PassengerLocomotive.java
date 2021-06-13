@@ -4,7 +4,7 @@ import project.vehiclestuff.trainstuff.trainpartinterface.IPassenger;
 
 public class PassengerLocomotive extends Locomotive implements IPassenger
 {
-	private final String NAME = "PL";
+	public static final String NAME = "PL";
 
 	public PassengerLocomotive() {
 	}

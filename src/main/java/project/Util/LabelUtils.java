@@ -23,11 +23,7 @@ public abstract class LabelUtils
         setLableBackgroundAndBorderColor(label, color);
         label.setMinWidth(TEXT_FIELD_WIDTH);
         label.setMinHeight(TEXT_FIELD_HEIGHT);
-        label.setPrefWidth(Region.USE_PREF_SIZE);
-        label.setPrefHeight(Region.USE_PREF_SIZE);
-        //label.setMaxHeight(Integer.MAX_VALUE);
-        //label.setMaxWidth(Integer.MAX_VALUE);
-
+        label.setFont(Font.font(null, FontWeight.BOLD, FONT_SIZE));
 
         return label;
     }
@@ -44,14 +40,13 @@ public abstract class LabelUtils
 
     public static void setLabelBackGroundColor(Label label, String color)
     {
-        setLableBackgroundAndBorderColor(label, color);
+        label.setBackground(new Background(new BackgroundFill(Paint.valueOf(color), null, null)));
         label.setBorder(null);
     }
 
     public static void setLableBackgroundAndBorderColor(Label label, String color)
     {
         label.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
-        label.setFont(Font.font(null, FontWeight.BOLD, FONT_SIZE));
         label.setBackground(new Background(new BackgroundFill(Paint.valueOf(color), null, null)));
     }
 }

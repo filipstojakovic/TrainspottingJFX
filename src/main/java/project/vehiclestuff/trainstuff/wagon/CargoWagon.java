@@ -4,7 +4,7 @@ import project.vehiclestuff.trainstuff.trainpartinterface.ICargo;
 
 public class CargoWagon extends Wagon implements ICargo
 {
-    private final String NAME = "CW";
+    public static final String NAME = "CW";
 
     public CargoWagon()
     {

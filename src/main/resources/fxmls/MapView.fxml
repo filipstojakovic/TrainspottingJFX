@@ -12,9 +12,9 @@
 <BorderPane style="-fx-background-color: #628ADE;" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="project.map.MapController">
     <center>
-        <GridPane AnchorPane.bottomAnchor="0.0"
-                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" fx:id="gridPane"
-                  alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+        <GridPane fx:id="gridPane" alignment="CENTER" maxHeight="1.7976931348623157E308"
+                  maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
             </padding>
@@ -48,7 +48,7 @@
                         <Insets left="10.0" right="10.0"/>
                     </padding>
                 </VBox>
-                <Label fx:id="infoLabel">
+                <Label fx:id="infoLabel" textFill="black">
                     <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </padding>

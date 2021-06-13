@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import project.Util.LabelUtils;
 import project.constants.ColorConstants;
 import project.map.Field.RampField;
+import project.vehiclestuff.streetstuff.streetvehicle.Car;
+import project.vehiclestuff.streetstuff.streetvehicle.Truck;
 import project.vehiclestuff.trainstuff.RailRoad;
 
 import java.util.List;
@@ -39,42 +41,35 @@ public class RampWatcher extends Thread
                         .findFirst().get();
 
                 boolean shouldClose;
-                synchronized (railRoad)
+                shouldClose = shouldCloseRampOnRailRoad(railRoad) || shouldCloseRampOnRailRoad(opositeRoad);
+                railRoad.getRamps().forEach(ramp ->
                 {
-                    synchronized (opositeRoad)
+                    synchronized (ramp.RAMP_LOCK)
                     {
-                        shouldClose = shouldCloseRampOnRailRoad(railRoad) || shouldCloseRampOnRailRoad(opositeRoad);
-                        railRoad.getRamps().forEach(ramp ->
+                        final boolean close = shouldClose;
+                        Platform.runLater(() ->
                         {
-                            synchronized (ramp.RAMP_LOCK)
-                            {
-                                final boolean close = shouldClose;
-                                Platform.runLater(() ->
-                                {
-                                    var lbl = MapController.getGridCell(ramp.getxPosition(), ramp.getyPosition());
-                                    LabelUtils.setLableBackgroundAndBorderColor(lbl, close ? ColorConstants.RED : ColorConstants.BLACK);
-                                });
-
-                                ramp.setClosed(shouldClose);
-                                ramp.RAMP_LOCK.notify();
-                            }
-
+                            var lbl = MapController.getGridCell(ramp.getxPosition(), ramp.getyPosition());
+                            LabelUtils.setLableBackgroundAndBorderColor(lbl, close ? ColorConstants.RED : ColorConstants.BLACK);
                         });
-                    }
-                }
-                try
-                {
-                    Thread.sleep(10);
-                } catch (Exception ex)
-                {
-                    ex.printStackTrace();
-                }
 
+                        ramp.setClosed(shouldClose);
+                        ramp.RAMP_LOCK.notify();
+                    }
+                });
             }
+            try
+            {
+                Thread.sleep(MINOR_DELAY);
+            } catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+
         }
     }
 
-    public static final int MINOR_DELAY = 300;
+    public static final int MINOR_DELAY = 100;
 
     private boolean shouldCloseRampOnRailRoad(RailRoad trainRoad)
     {
@@ -93,7 +88,7 @@ public class RampWatcher extends Thread
                 numOfRamps--;
 
             String cellText = MapController.getGridCell(field.getxPosition(), field.getyPosition()).getText();
-            if (!trainRoad.isRailRoadEmpty() && !"".equals(cellText))
+            if (!trainRoad.isRailRoadEmpty() && !"".equals(cellText) && !Car.NAME.equals(cellText) && !Truck.NAME.equals(cellText))
             {
                 shouldClose = true;
                 break;

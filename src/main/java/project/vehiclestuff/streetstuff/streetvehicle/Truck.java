@@ -4,7 +4,7 @@ import project.vehiclestuff.streetstuff.StreetRoad;
 
 public class Truck extends StreetVehicle
 {
-    private static final String NAME = "TCK";
+    public static final String NAME = "TCK";
     private double weightLimit;
 
     public Truck(StreetRoad streetRoad, int speed)

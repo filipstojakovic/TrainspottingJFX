@@ -4,7 +4,7 @@ import project.vehiclestuff.streetstuff.StreetRoad;
 
 public class Car extends StreetVehicle
 {
-    private static final String NAME = "CAR";
+    public static final String NAME = "CAR";
 
     private int numOfDoors;
 

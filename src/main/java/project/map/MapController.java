@@ -38,7 +38,7 @@ public class MapController implements Initializable
     private Label infoLabel;
     @FXML
     public GridPane gridPane;
-    public static GridPane mapPane;
+    public static GridPane mapGridPane;
 
     private HashMap<String, TrainStation> trainStationMap;
     private List<Street> streets;
@@ -133,14 +133,14 @@ public class MapController implements Initializable
     public synchronized static Label getGridCell(int x, int y)
     {
         if (x < DIM && x >= 0 && y < DIM && y >= 0)
-            return (Label) mapPane.getChildren().get(y * DIM + x);
+            return (Label) mapGridPane.getChildren().get(y * DIM + x);
 
         return null;
     }
 
     private void initializeMap() throws Exception
     {
-        mapPane = gridPane;
+        mapGridPane = gridPane;
         //gridPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         List<List<String>> mapValues = mapModel.getMap();
 

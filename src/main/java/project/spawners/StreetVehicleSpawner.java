@@ -178,7 +178,6 @@ public class StreetVehicleSpawner extends Thread
         }).start();
     }
 
-
     private static long num = 0;
 
     private StreetVehicle createVehicle(Street streetThatIsNotFull)

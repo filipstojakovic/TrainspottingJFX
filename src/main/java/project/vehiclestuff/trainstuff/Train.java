@@ -106,11 +106,8 @@ public class Train extends Thread
                         Thread.sleep(trainSpeed);
 
                     trainHistory.addPositionHistory(currentX, currentY);
-                    synchronized (currentRailRoad)
-                    {
-                        shiftBackTrainPosition(currentX, currentY);
-                        drawTrainOnMap();
-                    }
+                    shiftBackTrainPosition(currentX, currentY);
+                    drawTrainOnMap();
                     Thread.sleep(trainSpeed); // Train speed here
 
                     nextField = Map.getNextField(currentX, currentY, previousX, previousY, RailField.class);
@@ -218,7 +215,7 @@ public class Train extends Thread
                     String text = trainPart.getPartName();
                     if (isFirstPart && trainPart instanceof TrainPart)
                     {
-                        text += moveableParts.size();
+                        text += trainPartList.size();
                         isFirstPart = false;
                     }
                     label.setText(text);

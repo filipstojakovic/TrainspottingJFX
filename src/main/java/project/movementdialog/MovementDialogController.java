@@ -32,6 +32,11 @@ public class MovementDialogController implements Initializable, EventHandler<Mou
             movementDialogModel = new MovementDialogModel();
             movementDialogModel.getAllFilesFromDir(fileList ->
             {
+                if (fileList.isEmpty())
+                {
+                    textArea.setText("Currently there is no train history");
+                    return;
+                }
                 listView.getItems().addAll(fileList);
                 listView.setOnMouseClicked(this);
                 listView.setOnKeyPressed(keyEvent ->

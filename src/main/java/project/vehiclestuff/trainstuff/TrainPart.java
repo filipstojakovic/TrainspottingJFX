@@ -2,7 +2,7 @@ package project.vehiclestuff.trainstuff;
 
 import java.util.Objects;
 
-public abstract class TrainPart
+public abstract class TrainPart implements IMoveable
 {
     //ABSTRACT
     protected int currentX = -1;
@@ -13,8 +13,6 @@ public abstract class TrainPart
         currentX = x;
         currentY = y;
     }
-
-    public abstract String getPartName();
 
     public int getCurrentX()
     {

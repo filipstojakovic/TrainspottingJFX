@@ -60,7 +60,8 @@ public class TrainSpawner extends Thread
                     WatchEvent.Kind<?> kind = event.kind();
                     WatchEvent<Path> ev = (WatchEvent<Path>) event;
                     Path fileName = ev.context();
-                    System.out.println(kind.name() + ": " + fileName);
+                    if (kind.equals(ENTRY_CREATE))
+                        System.out.println(kind.name() + ": " + fileName);
                     if (fileName.toString().trim().endsWith(".json")
                             && kind.equals(ENTRY_CREATE)
                             && !visitedFileNames.contains(fileName.toString()))

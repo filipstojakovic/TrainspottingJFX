@@ -16,6 +16,7 @@ import project.vehiclestuff.trainstuff.trainstation.TrainStation;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
@@ -25,6 +26,7 @@ public class Train extends Thread
     private final String trainName;
     private Queue<TrainStation> destinationStationsOrder;
     private List<TrainPart> trainPartList;
+    private List<IMoveable> moveableParts;
     private int trainSpeed;
     private boolean isElectric = true; // if there is a Locomotive with Electric Engine
     private TrainHistory trainHistory;
@@ -49,6 +51,12 @@ public class Train extends Thread
         try
         {
             validateTrainAttributes();
+            moveableParts = new ArrayList<>();
+            if (isElectric)
+                moveableParts.add(new ElectricField());
+            moveableParts.addAll(trainPartList);
+            if (isElectric)
+                moveableParts.add(new ElectricField());
 
         } catch (TrainWithoutPartsException | NoDestinationStationsException ex)
         {
@@ -157,7 +165,7 @@ public class Train extends Thread
 
     private void parkTrainInStation() throws InterruptedException
     {
-        for (TrainPart trainPart : trainPartList)
+        for (var trainPart : moveableParts)
         {
             shiftBackTrainPosition(-1, -1);
             drawTrainOnMap();
@@ -179,19 +187,19 @@ public class Train extends Thread
         synchronized (RampWatcher.RAMP_LOCK)
         {
             deleteLastTrainPartText();
-            for (int i = trainPartList.size() - 1; i > 0; i--)
+            for (int i = moveableParts.size() - 1; i > 0; i--)
             {
-                TrainPart trainPart = trainPartList.get(i);
-                TrainPart trainPartBefore = trainPartList.get(i - 1);
+                var trainPart = moveableParts.get(i);
+                var trainPartBefore = moveableParts.get(i - 1);
                 trainPart.setPosition(trainPartBefore.getCurrentX(), trainPartBefore.getCurrentY());
             }
-            trainPartList.get(0).setPosition(currentX, currentY);
+            moveableParts.get(0).setPosition(currentX, currentY);
         }
     }
 
     private void deleteLastTrainPartText()
     {
-        var lastField = trainPartList.get(trainPartList.size() - 1);
+        var lastField = moveableParts.get(moveableParts.size() - 1);
         int xPosition = lastField.getCurrentX();
         int yPosition = lastField.getCurrentY();
         Platform.runLater(() ->
@@ -207,15 +215,15 @@ public class Train extends Thread
         Platform.runLater(() ->
         {
             boolean isFirstPart = true;
-            for (var trainPart : trainPartList)
+            for (var trainPart : moveableParts)
             {
                 var label = MapController.getGridCell(trainPart.getCurrentX(), trainPart.getCurrentY());
                 if (label != null)
                 {
                     String text = trainPart.getPartName();
-                    if (isFirstPart)
+                    if (isFirstPart && trainPart instanceof TrainPart)
                     {
-                        text += trainPartList.size();
+                        text += moveableParts.size();
                         isFirstPart = false;
                     }
                     label.setText(text);

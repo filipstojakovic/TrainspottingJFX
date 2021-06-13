@@ -5,54 +5,84 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="510.0" prefWidth="684.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/16" fx:controller="project.movementdialog.MovementDialogController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="510.0"
+            prefWidth="740.0" style="-fx-background-color: #628ADE;" xmlns="http://javafx.com/javafx/16"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.movementdialog.MovementDialogController">
     <center>
-        <VBox BorderPane.alignment="CENTER">
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0" BorderPane.alignment="CENTER">
             <BorderPane.margin>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </BorderPane.margin>
             <children>
-                <Label text="Train details:">
+                <Label text="Train details:" textFill="WHITE">
                     <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                     </VBox.margin>
+                    <font>
+                        <Font name="System Bold" size="12.0"/>
+                    </font>
                 </Label>
-                <TextArea fx:id="textArea" editable="false" prefHeight="455.0" prefWidth="455.0" text="Select train to view details" wrapText="true" />
+                <AnchorPane VBox.vgrow="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                            AnchorPane.rightAnchor="0.0"
+                            AnchorPane.topAnchor="0.0">
+                    <children>
+                        <TextArea VBox.vgrow="ALWAYS" fx:id="textArea" editable="false" prefHeight="181.6"
+                                  prefWidth="477.6"
+                                  text="Select train to view details" wrapText="true" AnchorPane.bottomAnchor="0.0"
+                                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                    </children>
+                </AnchorPane>
             </children>
             <opaqueInsets>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </opaqueInsets>
         </VBox>
     </center>
     <bottom>
-        <Button mnemonicParsing="false" onAction="#closeBtnClicked" text="Close" BorderPane.alignment="CENTER_RIGHT">
+        <Button mnemonicParsing="false" onAction="#closeBtnClicked" style="-fx-background-color: white;" text="Close"
+                BorderPane.alignment="CENTER_RIGHT">
             <font>
-                <Font name="System Bold" size="15.0" />
+                <Font name="System Bold" size="15.0"/>
             </font>
             <BorderPane.margin>
-                <Insets bottom="10.0" left="5.0" right="20.0" top="5.0" />
+                <Insets bottom="10.0" left="5.0" right="20.0" top="5.0"/>
             </BorderPane.margin>
         </Button>
     </bottom>
     <left>
-        <VBox BorderPane.alignment="CENTER">
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+              BorderPane.alignment="CENTER">
             <BorderPane.margin>
-                <Insets bottom="5.0" left="5.0" top="5.0" />
+                <Insets bottom="5.0" left="5.0" top="5.0"/>
             </BorderPane.margin>
             <children>
-                <Label text="Train list:">
+                <Label text="Train list:" textFill="WHITE">
                     <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                     </VBox.margin>
+                    <font>
+                        <Font name="System Bold" size="12.0"/>
+                    </font>
                 </Label>
-                <ListView fx:id="listView" prefHeight="451.0" prefWidth="214.0" />
+                <AnchorPane VBox.vgrow="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                            AnchorPane.rightAnchor="0.0"
+                            AnchorPane.topAnchor="0.0">
+                    <children>
+                        <ListView VBox.vgrow="ALWAYS" fx:id="listView" maxHeight="1.7976931348623157E308"
+                                  maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0"
+                                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                    </children>
+                </AnchorPane>
             </children>
             <opaqueInsets>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </opaqueInsets>
         </VBox>
     </left>

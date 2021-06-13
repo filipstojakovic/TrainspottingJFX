@@ -9,11 +9,10 @@ import java.util.concurrent.TimeUnit;
 
 public class TrainHistory implements Serializable
 {
-    @Serial
-    private static final long serialVersionUID = 1L;
+    @Serial private static final long serialVersionUID = 1L;
     private static final String ARROW = " -> ";
 
-    class Position implements Serializable
+    static class Position implements Serializable
     {
         int x;
         int y;
@@ -60,13 +59,10 @@ public class TrainHistory implements Serializable
     @Override
     public String toString()
     {
-        StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(departureTimeString()).append("\n");
-        stringBuilder.append(parkedTimeDurationString()).append("\n");
-        stringBuilder.append(pathHistoryString());
-
-        return stringBuilder.toString();
+        return departureTimeString() + "\n" +
+                parkedTimeDurationString() + "\n" +
+                pathHistoryString();
     }
 
     private String departureTimeString()

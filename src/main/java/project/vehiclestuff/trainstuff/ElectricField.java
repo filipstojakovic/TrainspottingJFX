@@ -2,7 +2,7 @@ package project.vehiclestuff.trainstuff;
 
 import java.util.Objects;
 
-public class ElectricField implements IMovable
+public class ElectricField implements IMoveable
 {
     private static final String THUNDER = "⚡";
 

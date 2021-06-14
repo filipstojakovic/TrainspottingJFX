@@ -1,8 +1,11 @@
 package project.spawners;
 
+import org.json.simple.parser.ParseException;
 import project.Util.GenericLogger;
+import project.Util.TrainValidator;
 import project.Util.Utils;
 import project.exception.TrainNotValidException;
+import project.exception.UnreachableStationException;
 import project.jsonparsers.TrainJsonParser;
 import project.vehiclestuff.trainstuff.Train;
 import project.vehiclestuff.trainstuff.trainstation.TrainStation;
@@ -14,6 +17,7 @@ import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 
@@ -54,12 +58,14 @@ public class TrainSpawner extends Thread
                     key = watcher.take();
                 } catch (InterruptedException ex)
                 {
-                    GenericLogger.asyncLog(this.getClass(), ex);
+                    GenericLogger.createAsyncLog(this.getClass(), ex);
                     return;
                 }
 
                 for (WatchEvent<?> event : key.pollEvents())
                 {
+                    if (!isActive)
+                        break;
                     WatchEvent.Kind<?> kind = event.kind();
                     WatchEvent<Path> ev = (WatchEvent<Path>) event;
                     Path fileName = ev.context();
@@ -75,14 +81,12 @@ public class TrainSpawner extends Thread
                             visitedFileNames.add(fileName.toString());
                             Path filePath = dir.resolve(fileName);
                             Train train = getTrainFromFile(filePath);
-                            if (train != null)
-                                train.start();
+                            train.start();
 
-                        } catch (InterruptedException | TrainNotValidException ex)
+                        } catch (InterruptedException | TrainNotValidException | ParseException | UnreachableStationException ex)
                         {
-                            GenericLogger.asyncLog(this.getClass(), ex);
+                            GenericLogger.createAsyncLog(this.getClass(), ex);
                         }
-
                     }
                 }
 
@@ -94,7 +98,7 @@ public class TrainSpawner extends Thread
 
         } catch (IOException ex)
         {
-            GenericLogger.asyncLog(this.getClass(), ex);
+            GenericLogger.createAsyncLog(this.getClass(), ex);
         }
     }
 
@@ -110,37 +114,35 @@ public class TrainSpawner extends Thread
         {
             for (File file : files)
             {
-                try
+                if (file.isFile())
                 {
-                    if (file.isFile())
+                    try
                     {
                         Thread.sleep(MINOR_DELAY);
                         Train train = getTrainFromFile(file.toPath());
-                        if (train != null)
-                            train.start();
-
+                        train.start();
+                    } catch (Exception ex)
+                    {
+                        GenericLogger.createAsyncLog(this.getClass(), Level.WARNING, "Problem detectedin file named: " + file.getName(), ex);
                     }
-                } catch (InterruptedException | TrainNotValidException ex)
-                {
-                    GenericLogger.asyncLog(this.getClass(), ex);
                 }
             }
         }).start();
     }
 
-    private Train getTrainFromFile(Path filePath) throws TrainNotValidException
+    private Train getTrainFromFile(Path filePath) throws TrainNotValidException, IOException, ParseException, UnreachableStationException
     {
         Train train = TrainJsonParser.getTrainPartsFromJson(trainStationMap, filePath.toString());
-        validateTrain(train);
-        //TODO: validate train
-        // can it reach destination station
+
+        if (!TrainValidator.isTrainValid(train))
+            throw new TrainNotValidException(train.getTrainName());
+
+        if (!TrainValidator.isTrainDestinationStationReachable(train))
+            throw new UnreachableStationException();
+
         return train;
     }
 
-    private void validateTrain(Train train) throws TrainNotValidException
-    {
-
-    }
 
     public void close()
     {

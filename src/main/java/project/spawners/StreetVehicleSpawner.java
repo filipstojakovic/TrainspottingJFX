@@ -113,7 +113,7 @@ public class StreetVehicleSpawner extends Thread
             System.out.println("Closing StreetVehicleSpawner thread");
         } catch (InterruptedException ex)
         {
-            GenericLogger.asyncLog(this.getClass(), ex);
+            GenericLogger.createAsyncLog(this.getClass(), ex);
         }
     }
 
@@ -124,6 +124,7 @@ public class StreetVehicleSpawner extends Thread
                 .collect(Collectors.toList());
     }
 
+    //watching folder "./res" and checking config.properties for modification
     private void startWatcher()
     {
         new Thread(() ->
@@ -147,16 +148,17 @@ public class StreetVehicleSpawner extends Thread
                         key = watcher.take();
                     } catch (InterruptedException ex)
                     {
-                        GenericLogger.asyncLog(this.getClass(), ex);
+                        GenericLogger.createAsyncLog(this.getClass(), ex);
                         return;
                     }
 
                     for (WatchEvent<?> event : key.pollEvents())
                     {
+                        if (!isWatcherActive)
+                            break;
                         WatchEvent.Kind<?> kind = event.kind();
                         WatchEvent<Path> ev = (WatchEvent<Path>) event;
                         Path fileName = ev.context();
-                        System.out.println(kind.name() + ": " + fileName);
                         if (fileName.toString().trim().equals("config.properties")
                                 && kind.equals(ENTRY_MODIFY))
                         {
@@ -165,8 +167,9 @@ public class StreetVehicleSpawner extends Thread
                                 Thread.sleep(MINOR_DELAY);
                             } catch (InterruptedException ex)
                             {
-                                GenericLogger.asyncLog(this.getClass(), ex);
+                                GenericLogger.createAsyncLog(this.getClass(), ex);
                             }
+                            System.out.println(kind.name() + ": " + "config.properties");
                             properties = Utils.loadPropertie(Constants.CONFIGURATION_FILE);
                             readStreetVehiclePropertyFile();
                             break;
@@ -175,14 +178,12 @@ public class StreetVehicleSpawner extends Thread
 
                     boolean valid = key.reset();
                     if (!valid)
-                    {
                         break;
-                    }
                 }
                 System.out.println("Closing " + directory.getName() + " file watcher");
             } catch (IOException | URISyntaxException | PropertyNotFoundException ex)
             {
-                GenericLogger.asyncLog(this.getClass(), ex);
+                GenericLogger.createAsyncLog(this.getClass(), ex);
             }
         }).start();
     }

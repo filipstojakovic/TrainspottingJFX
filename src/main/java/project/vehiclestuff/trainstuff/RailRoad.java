@@ -1,7 +1,6 @@
 package project.vehiclestuff.trainstuff;
 
 import project.map.Field.Field;
-import project.map.Field.RailField;
 import project.map.Field.RampField;
 
 import java.util.*;
@@ -61,31 +60,6 @@ public class RailRoad
     public Field getStartingField()
     {
         return roadFields.get(0);
-    }
-
-    @Override
-    public String toString()
-    {
-        StringBuilder text = new StringBuilder("RailRoad{" +
-                "startStationName='" + startStationName + '\'' +
-                ", endStationName='" + endStationName + '\'');
-
-        for (var field : roadFields)
-        {
-            String fieldText = "(" + field.getxPosition() + ", " + field.getyPosition();
-            if (field instanceof RampField test)
-            {
-                fieldText += ", " + test.isHasElectricity();
-            } else if (field instanceof RailField test)
-            {
-                fieldText += ", " + test.isHasElectricity();
-            }
-            fieldText += ") ";
-            text.append(fieldText);
-        }
-        text.append('}').append("\n\n");
-
-        return text.toString();
     }
 
     @Override

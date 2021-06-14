@@ -10,46 +10,39 @@ import java.util.logging.Logger;
 
 public abstract class GenericLogger
 {
-    /*
-    useage example
-    } catch (IOException ex)
+    public static void createLog(Class<?> C, Exception ex)
     {
-        GenericLogger.log(this.getClass(), ex);
-    }
-     */
-    public static void log(Class<?> C, Exception ex)
-    {
-        GenericLogger.log(C, Level.WARNING, ex.fillInStackTrace().toString(), ex);
+        GenericLogger.createLog(C, Level.WARNING, ex.fillInStackTrace().toString(), ex);
     }
 
-    public static void log(Class<?> C, Level level, String msg, Throwable thrown)
+    public static void createLog(Class<?> C, Level level, String msg, Throwable thrown)
     {
         Logger logger = Logger.getLogger(C.getName());
-        if (logger.getHandlers().length == 0)
+        //if (logger.getHandlers().length == 0)
+        //{
+        try
         {
-            try
-            {
-                String path = "." + File.separator + "res" + File.separator + "logs" + File.separator;
-                Utils.createFolderIfNotExists(path);
-                Handler handler = new FileHandler(path + C.getName() + LocalDateTime.now().toLocalTime().toString().replace(':', '_') + ".log");
-                logger.addHandler(handler);
-                logger.log(level, msg, thrown);
-                handler.close();
+            String path = "." + File.separator + "res" + File.separator + "logs" + File.separator;
+            Utils.createFolderIfNotExists(path);
+            Handler handler = new FileHandler(path + C.getName() + LocalDateTime.now().toLocalTime().toString().replace(':', '_') + ".log");
+            logger.addHandler(handler);
+            logger.log(level, msg, thrown);
+            handler.close();
 
-            } catch (IOException ex)
-            {
-                ex.printStackTrace();
-            }
+        } catch (IOException ex)
+        {
+            ex.printStackTrace();
         }
+        //}
     }
 
-    public static void asyncLog(Class<?> C, Exception ex)
+    public static void createAsyncLog(Class<?> C, Exception ex)
     {
-        GenericLogger.asyncLog(C, Level.WARNING, ex.fillInStackTrace().toString(), ex);
+        GenericLogger.createAsyncLog(C, Level.WARNING, ex.fillInStackTrace().toString(), ex);
     }
 
-    public static void asyncLog(Class<?> C, Level level, String msg, Throwable thrown)
+    public static void createAsyncLog(Class<?> C, Level level, String msg, Throwable thrown)
     {
-        new Thread(() -> GenericLogger.log(C, level, msg, thrown)).start();
+        new Thread(() -> GenericLogger.createLog(C, level, msg, thrown)).start();
     }
 }

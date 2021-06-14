@@ -15,32 +15,25 @@ import java.util.List;
 
 public class RailRoadJsonParser extends JsonParser
 {
-    public static List<RailRoad> getRailRoadListFromJson(String path)
+    public static List<RailRoad> getRailRoadListFromJson(String path) throws IOException, ParseException
     {
         List<RailRoad> railRoads = new ArrayList<>();
-        try
-        {
-            JSONArray jsonArray = (JSONArray) getJsonObjectFromFile(path);
+        JSONArray jsonArray = (JSONArray) getJsonObjectFromFile(path);
 
-            // go line by line
-            for (Object obj : jsonArray)
+        // go line by line
+        for (Object obj : jsonArray)
+        {
+            JSONObject jsonObject = (JSONObject) obj;
+            try
             {
-                JSONObject jsonObject = (JSONObject) obj;
-                try
-                {
-                    RailRoad trainLine = getRailRoadFromJson(jsonObject);
-                    railRoads.add(trainLine);
-                    railRoads.add(trainLine.createReverseLine());
+                RailRoad trainLine = getRailRoadFromJson(jsonObject);
+                railRoads.add(trainLine);
+                railRoads.add(trainLine.createReverseLine());
 
-                } catch (ClassCastException ex)
-                {
-                    GenericLogger.asyncLog(RailRoadJsonParser.class, ex);
-                }
+            } catch (ClassCastException ex)
+            {
+                GenericLogger.createAsyncLog(RailRoadJsonParser.class, ex);
             }
-        } catch (IOException | ParseException ex)
-        {
-            GenericLogger.asyncLog(RailRoadJsonParser.class, ex);
-            //ex.printStackTrace();
         }
         return railRoads;
     }

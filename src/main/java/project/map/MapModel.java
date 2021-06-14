@@ -81,7 +81,7 @@ public class MapModel
         return new TrainSpawner(trainDir, trainStationMap);
     }
 
-    public List<RailRoad> initRailRoads() throws PropertyNotFoundException
+    public List<RailRoad> initRailRoads() throws PropertyNotFoundException, IOException, ParseException
     {
         //todo: propertie path maybe
         String path = properties.getProperty(Constants.RAILROADS_PROP);

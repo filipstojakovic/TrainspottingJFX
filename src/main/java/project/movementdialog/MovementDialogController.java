@@ -54,7 +54,7 @@ public class MovementDialogController implements Initializable, EventHandler<Mou
 
         } catch (IOException | URISyntaxException ex)
         {
-            GenericLogger.asyncLog(this.getClass(), Level.WARNING, "Unable to start Movement Dialog correctly" + getClass(), ex);
+            GenericLogger.createAsyncLog(this.getClass(), Level.WARNING, "Unable to start Movement Dialog correctly" + getClass(), ex);
         }
     }
 

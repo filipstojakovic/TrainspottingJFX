@@ -3,13 +3,17 @@ package project.jsonparsers;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import project.Util.GenericLogger;
 import project.exception.TrainNotValidException;
 import project.vehiclestuff.trainstuff.Train;
 import project.vehiclestuff.trainstuff.TrainPart;
 import project.vehiclestuff.trainstuff.locomotive.*;
 import project.vehiclestuff.trainstuff.trainstation.TrainStation;
-import project.vehiclestuff.trainstuff.wagon.*;
+import project.vehiclestuff.trainstuff.wagon.CargoWagon;
+import project.vehiclestuff.trainstuff.wagon.SpecialUseWagon;
+import project.vehiclestuff.trainstuff.wagon.passengerwagon.PassengerBedWagon;
+import project.vehiclestuff.trainstuff.wagon.passengerwagon.PassengerRestaurantWagon;
+import project.vehiclestuff.trainstuff.wagon.passengerwagon.PassengerSeatWagon;
+import project.vehiclestuff.trainstuff.wagon.passengerwagon.PassengerSleepWagon;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,56 +29,46 @@ public class TrainJsonParser extends JsonParser
 
     public static final int MIN_TRAIN_SPEED = 500;
 
-    public static Train getTrainPartsFromJson(final HashMap<String, TrainStation> trainstationHashMap, String trainPath)
+    public static Train getTrainPartsFromJson(final HashMap<String, TrainStation> trainstationHashMap, String trainPath) throws TrainNotValidException, IOException, ParseException
     {
-        Train train;
-        try
+        File file = new File(trainPath);
+        JSONObject obj = (JSONObject) getJsonObjectFromFile(file);
+        Train train = new Train(file.getName());
+
+        int trainSpeed = ((Long) obj.get(TRAIN_SPEED)).intValue();
+
+        if (trainSpeed < MIN_TRAIN_SPEED)
+            throw new TrainNotValidException("Train speed is set to " + trainSpeed + " (minimal speed is " + MIN_TRAIN_SPEED + ")");
+        train.setTrainSpeed(trainSpeed);
+
+        List<TrainPart> trainPartList = new ArrayList<>();
+        JSONArray jsonArray = (JSONArray) obj.get(TRAIN_PARTS);
+        for (Object arrayObject : jsonArray)
         {
-            File file = new File(trainPath);
-            JSONObject obj = (JSONObject) getJsonObjectFromFile(file);
-            train = new Train(file.getName());
-
-            int trainSpeed = ((Long) obj.get(TRAIN_SPEED)).intValue();
-
-            if (trainSpeed < MIN_TRAIN_SPEED)
-                throw new TrainNotValidException("Train speed is set to " + trainSpeed + " (minimal speed is " + MIN_TRAIN_SPEED + ")");
-            train.setTrainSpeed(trainSpeed);
-
-            List<TrainPart> trainPartList = new ArrayList<>();
-            JSONArray jsonArray = (JSONArray) obj.get(TRAIN_PARTS);
-            for (Object arrayObject : jsonArray)
+            JSONObject jsonObject = (JSONObject) arrayObject;
+            TrainPart trainPart = getTrainPartByClassName((String) jsonObject.get(PART_TYPE));
+            if (trainPart instanceof Locomotive locomotive && jsonObject.containsKey(ENGINE))
             {
-                JSONObject jsonObject = (JSONObject) arrayObject;
-                TrainPart trainPart = getTrainPartByClassName((String) jsonObject.get(PART_TYPE));
-                if (trainPart instanceof Locomotive locomotive && jsonObject.containsKey(ENGINE))
+                String engine = ((String) jsonObject.get(ENGINE)).toLowerCase().trim();
+                EngineEnum engineEnum;
+                try
                 {
-                    String engine = ((String) jsonObject.get(ENGINE)).toLowerCase().trim();
-                    EngineEnum engineEnum;
-                    try
-                    {
-                        engineEnum = EngineEnum.valueOf(engine); // throws IllegalArgumentException
-                        if (EngineEnum.electric.equals(engineEnum))
-                            train.setElectric(true);
-                    } catch (IllegalArgumentException e)
-                    {
-                        throw new TrainNotValidException("Unknown locomotive engine type");
-                    }
-                    locomotive.setEngine(engineEnum);
-
+                    engineEnum = EngineEnum.valueOf(engine); // throws IllegalArgumentException
+                    if (EngineEnum.electric.equals(engineEnum))
+                        train.setElectric(true);
+                } catch (IllegalArgumentException e)
+                {
+                    throw new TrainNotValidException("Unknown locomotive engine type");
                 }
-                trainPartList.add(trainPart);
+                locomotive.setEngine(engineEnum);
+
             }
-
-            Queue<TrainStation> stationsOrder = getStationOrder(trainstationHashMap, obj);
-
-            train.setDestinationStationsOrder(stationsOrder);
-            train.setTrainPartList(trainPartList);
-
-        } catch (ParseException | IOException | TrainNotValidException | IllegalArgumentException ex)
-        {
-            GenericLogger.asyncLog(TrainJsonParser.class, ex);
-            train = null;
+            trainPartList.add(trainPart);
         }
+        train.setTrainPartList(trainPartList);
+
+        Queue<TrainStation> stationsOrder = getStationOrder(trainstationHashMap, obj);
+        train.setDestinationStationsOrder(stationsOrder);
 
         return train;
     }
@@ -97,6 +91,7 @@ public class TrainJsonParser extends JsonParser
         //        Constructor<?> ctor = myClass.getConstructor();
         //        return (TrainPart) ctor.newInstance();
 
+        //switch does not work here
         if (CargoLocomotive.class.getSimpleName().equals(className))
             return new CargoLocomotive();
         else if (ManeuverLocomotive.class.getSimpleName().equals(className))

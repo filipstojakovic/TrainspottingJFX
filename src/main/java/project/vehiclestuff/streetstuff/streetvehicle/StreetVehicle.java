@@ -78,7 +78,7 @@ public abstract class StreetVehicle extends Thread
             }
         } catch (InterruptedException ex)
         {
-            GenericLogger.asyncLog(this.getClass(), ex);
+            GenericLogger.createAsyncLog(this.getClass(), ex);
         }
     }
 
@@ -101,5 +101,35 @@ public abstract class StreetVehicle extends Thread
             if (label != null)
                 label.setText("");
         });
+    }
+
+    public String getMark()
+    {
+        return mark;
+    }
+
+    public void setMark(String mark)
+    {
+        this.mark = mark;
+    }
+
+    public String getModel()
+    {
+        return model;
+    }
+
+    public void setModel(String model)
+    {
+        this.model = model;
+    }
+
+    public int getYear()
+    {
+        return year;
+    }
+
+    public void setYear(int year)
+    {
+        this.year = year;
     }
 }

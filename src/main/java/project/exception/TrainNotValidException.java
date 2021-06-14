@@ -2,7 +2,7 @@ package project.exception;
 
 public class TrainNotValidException extends Exception
 {
-    public static final String MSG = "Train has not valid construction";
+    public static final String MSG = "Train does not have valid parts construction";
 
     public TrainNotValidException()
     {
@@ -11,6 +11,6 @@ public class TrainNotValidException extends Exception
 
     public TrainNotValidException(String msg)
     {
-        super(msg);
+        super(MSG + ": " + msg);
     }
 }

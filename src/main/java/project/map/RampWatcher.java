@@ -10,6 +10,7 @@ import project.vehiclestuff.streetstuff.streetvehicle.Truck;
 import project.vehiclestuff.trainstuff.RailRoad;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class RampWatcher extends Thread
 {
@@ -32,14 +33,21 @@ public class RampWatcher extends Thread
         {
             for (RailRoad railRoad : railRoads)
             {
-                RailRoad opositeRoad = railRoads.stream()
-                        .filter(x ->
-                        {
-                            String startName = railRoad.getStartStationName();
-                            String endName = railRoad.getEndStationName();
-                            return startName.equals(x.getEndStationName()) && endName.equals(x.getStartStationName());
-                        })
-                        .findFirst().get();
+                RailRoad opositeRoad = null;
+                try
+                {
+                    opositeRoad = railRoads.stream()
+                            .filter(x ->
+                            {
+                                String startName = railRoad.getStartStationName();
+                                String endName = railRoad.getEndStationName();
+                                return startName.equals(x.getEndStationName()) && endName.equals(x.getStartStationName());
+                            })
+                            .findFirst().orElseThrow();
+                } catch (NoSuchElementException ex)
+                {
+                    GenericLogger.createAsyncLog(this.getClass(), ex);
+                }
 
                 boolean shouldClose;
                 shouldClose = shouldCloseRampOnRailRoad(railRoad) || shouldCloseRampOnRailRoad(opositeRoad);
@@ -65,7 +73,7 @@ public class RampWatcher extends Thread
                 Thread.sleep(MINOR_DELAY);
             } catch (InterruptedException ex)
             {
-                GenericLogger.asyncLog(this.getClass(), ex);
+                GenericLogger.createAsyncLog(this.getClass(), ex);
             }
 
         }
@@ -97,11 +105,6 @@ public class RampWatcher extends Thread
             }
         }
         return shouldClose;
-    }
-
-    public void setActive(boolean active)
-    {
-        isActive = active;
     }
 
     public void close()

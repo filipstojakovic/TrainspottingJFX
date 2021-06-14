@@ -34,7 +34,7 @@ public class StartApp extends Application implements EventHandler<WindowEvent>
 
         } catch (IOException ex)
         {
-            GenericLogger.asyncLog(getClass(), Level.SEVERE, "Unable to open MapView.fxml file", ex);
+            GenericLogger.createAsyncLog(getClass(), Level.SEVERE, "Unable to open MapView.fxml file", ex);
         }
     }
 

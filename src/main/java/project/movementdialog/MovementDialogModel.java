@@ -41,7 +41,7 @@ public class MovementDialogModel
                     throw new PropertyNotFoundException(TRAIN_HISTORY_DIR_PROP);
             } catch (PropertyNotFoundException ex)
             {
-                GenericLogger.asyncLog(this.getClass(), ex);
+                GenericLogger.createAsyncLog(this.getClass(), ex);
                 return;
             }
 
@@ -71,7 +71,7 @@ public class MovementDialogModel
                     throw new PropertyNotFoundException(TRAIN_HISTORY_DIR_PROP);
             } catch (PropertyNotFoundException ex)
             {
-                GenericLogger.asyncLog(this.getClass(), ex);
+                GenericLogger.createAsyncLog(this.getClass(), ex);
                 return;
             }
 
@@ -85,7 +85,7 @@ public class MovementDialogModel
 
             } catch (IOException | ClassNotFoundException ex)
             {
-                GenericLogger.asyncLog(this.getClass(), ex);
+                GenericLogger.createAsyncLog(this.getClass(), ex);
             }
         }).start();
     }

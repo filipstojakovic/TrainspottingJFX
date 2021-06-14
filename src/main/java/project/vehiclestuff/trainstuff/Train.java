@@ -4,8 +4,6 @@ import javafx.application.Platform;
 import javafx.scene.control.Label;
 import project.Util.GenericLogger;
 import project.Util.Utils;
-import project.exception.NoDestinationStationsException;
-import project.exception.TrainWithoutPartsException;
 import project.map.Field.Field;
 import project.map.Field.RailField;
 import project.map.Field.RampField;
@@ -46,15 +44,6 @@ public class Train extends Thread
     @Override
     public void run()
     {
-        try
-        {
-            validateTrainAttributes();
-
-        } catch (TrainWithoutPartsException | NoDestinationStationsException ex)
-        {
-            GenericLogger.asyncLog(this.getClass(), ex);
-            return;
-        }
         constructMoveableParts();
 
         final TrainHistory trainHistory = new TrainHistory();
@@ -74,8 +63,8 @@ public class Train extends Thread
                 firstStation = secondStation;
                 secondStation = destinationStationsOrder.poll();
 
-                currentRailRoad = getRailRoadBetweenStations(firstStation, secondStation);
-                oppositeRailRoad = getRailRoadBetweenStations(secondStation, firstStation);
+                currentRailRoad = TrainStation.getRailRoadBetweenStations(firstStation, secondStation);
+                oppositeRailRoad = TrainStation.getRailRoadBetweenStations(secondStation, firstStation);
 
                 while (!oppositeRailRoad.isRailRoadEmpty())
                     Thread.sleep(trainSpeed);
@@ -84,34 +73,11 @@ public class Train extends Thread
                 firstStation.removeParkedTrain(this); // remove from TrainStation parked train
 
                 trainHistory.addStationParkedTime(firstStation.getStationName(), System.currentTimeMillis() - currentTime);
-
-                Field railRoadField = currentRailRoad.getStartingField();
-                int currentX = railRoadField.getxPosition();
-                int currentY = railRoadField.getyPosition();
-
-                Field stationField = firstStation.getStartingFieldForDestination(secondStation.getStationName());
-                int previousX = stationField.getxPosition();
-                int previousY = stationField.getyPosition();
-
                 trainHistory.addStationDepartureTime(firstStation.getStationName(), System.currentTimeMillis());
-                Field nextField = railRoadField;
-                while (!(nextField instanceof TrainStationField))
-                {
-                    Label label = MapController.getGridCell(nextField.getxPosition(), nextField.getyPosition());
-                    while (!"".equals(label.getText()))
-                        Thread.sleep(trainSpeed);
 
-                    trainHistory.addPositionHistory(currentX, currentY);
-                    shiftBackTrainPosition(currentX, currentY);
-                    drawTrainOnMap();
-                    Thread.sleep(trainSpeed); // Train speed here
-
-                    nextField = Map.getNextField(currentX, currentY, previousX, previousY, RailField.class);
-                    previousX = currentX;
-                    previousY = currentY;
-                    currentX = nextField.getxPosition();
-                    currentY = nextField.getyPosition();
-                }
+                Field firstRailRoadField = currentRailRoad.getStartingField();
+                Field stationDepartureField = firstStation.getStartingFieldForDestination(secondStation.getStationName());
+                startTrainMovement(trainHistory, firstRailRoadField, stationDepartureField);
 
                 parkTrainInStation();
                 secondStation.addParkedTrain(this);
@@ -120,7 +86,7 @@ public class Train extends Thread
 
         } catch (InterruptedException ex)
         {
-            GenericLogger.asyncLog(this.getClass(), ex);
+            GenericLogger.createAsyncLog(this.getClass(), ex);
         }
 
         if (currentRailRoad != null)
@@ -128,6 +94,34 @@ public class Train extends Thread
         secondStation.removeParkedTrain(this);
 
         serializeTrainHistory(trainHistory);
+    }
+
+    private void startTrainMovement(TrainHistory trainHistory, Field firstRailRoadField, Field stationDepartureField) throws InterruptedException
+    {
+        int currentX = firstRailRoadField.getxPosition();
+        int currentY = firstRailRoadField.getyPosition();
+
+        int previousX = stationDepartureField.getxPosition();
+        int previousY = stationDepartureField.getyPosition();
+
+        Field nextField = firstRailRoadField;
+        while (!(nextField instanceof TrainStationField))
+        {
+            Label label = MapController.getGridCell(nextField.getxPosition(), nextField.getyPosition());
+            while (!"".equals(label.getText()))
+                Thread.sleep(trainSpeed);
+
+            trainHistory.addPositionHistory(currentX, currentY);
+            shiftBackTrainPosition(currentX, currentY);
+            drawTrainOnMap();
+            Thread.sleep(trainSpeed); // Train speed here
+
+            nextField = Map.getNextField(currentX, currentY, previousX, previousY, RailField.class);
+            previousX = currentX;
+            previousY = currentY;
+            currentX = nextField.getxPosition();
+            currentY = nextField.getyPosition();
+        }
     }
 
     private void constructMoveableParts()
@@ -149,20 +143,8 @@ public class Train extends Thread
             oos.writeObject(trainHistory);
         } catch (IOException ex)
         {
-            GenericLogger.asyncLog(this.getClass(), ex);
+            GenericLogger.createAsyncLog(this.getClass(), ex);
         }
-    }
-
-    private void validateTrainAttributes() throws TrainWithoutPartsException, NoDestinationStationsException
-    {
-        if (trainPartList == null || trainPartList.isEmpty())
-            throw new TrainWithoutPartsException();
-
-        if (destinationStationsOrder == null || destinationStationsOrder.isEmpty())
-            throw new NoDestinationStationsException();
-
-        //var firstStation = destinationStationsOrder.poll();
-
     }
 
     private void parkTrainInStation() throws InterruptedException
@@ -173,15 +155,6 @@ public class Train extends Thread
             drawTrainOnMap();
             Thread.sleep(trainSpeed); // Train speed here
         }
-    }
-
-    private RailRoad getRailRoadBetweenStations(final TrainStation firstStation, final TrainStation secondStation)
-    {
-        return firstStation.getTrainRailRoads().stream()
-                .filter(trainLine1 -> firstStation.getStationName().equals(trainLine1.getStartStationName())
-                        && secondStation.getStationName().equals(trainLine1.getEndStationName()))
-                .findFirst()
-                .orElse(null);
     }
 
     private void shiftBackTrainPosition(int currentX, int currentY)
@@ -238,6 +211,11 @@ public class Train extends Thread
         {
             rampField.setHasElectricity(hasElectricity);
         }
+    }
+
+    public List<TrainPart> getTrainPartList()
+    {
+        return trainPartList;
     }
 
     private boolean drawTrainPartOnMap(boolean isFirstPart, IMoveable trainPart, int xPosition, int yPosition)

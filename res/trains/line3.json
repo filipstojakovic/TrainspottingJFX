@@ -1,6 +1,5 @@
 {
-  "train_speed": 1000,
-
+  "train_speed": 500,
   "stationOrder": [
     "D",
     "C",
@@ -13,7 +12,7 @@
       "engine": "steam"
     },
     {
-      "part_type": "CargoLocomotive",
+      "part_type": "CargoWagon",
       "engine": "steam"
     },
     {
@@ -21,7 +20,7 @@
       "engine": "steam"
     },
     {
-      "part_type": "PassengerLocomotive",
+      "part_type": "SpecialUseWagon",
       "engine": "steam"
     }
   ]

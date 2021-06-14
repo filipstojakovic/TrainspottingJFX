@@ -61,7 +61,7 @@ public class MapController implements Initializable
 
         } catch (Exception ex)
         {
-            GenericLogger.log(this.getClass(), Level.SEVERE, "Unable to load nessery components", ex);
+            GenericLogger.createLog(this.getClass(), Level.SEVERE, "Unable to load nessery components", ex);
             System.exit(1);
         }
         try
@@ -71,7 +71,7 @@ public class MapController implements Initializable
 
         } catch (PropertyNotFoundException ex)
         {
-            GenericLogger.asyncLog(this.getClass(), Level.WARNING, "Unable to get TrainHistory folder path from popertie file", ex);
+            GenericLogger.createAsyncLog(this.getClass(), Level.WARNING, "Unable to get TrainHistory folder path from popertie file", ex);
         }
     }
 
@@ -88,22 +88,19 @@ public class MapController implements Initializable
                 rampWatcher.close();
             rampWatcher = new RampWatcher(railRoads);
             rampWatcher.start();
-        } catch (IllegalThreadStateException ex)
-        {
-            GenericLogger.asyncLog(this.getClass(), ex);
-        }
 
-
-        try
-        {
             if (trainSpawner != null)
                 trainSpawner.close();
             trainSpawner = mapModel.initTrainSpawner(trainStationMap);
             trainSpawner.getAllTrainsFromDirectory();
             trainSpawner.start();
-        } catch (URISyntaxException | FileNotFoundException | PropertyNotFoundException ex)
+        } catch (URISyntaxException | FileNotFoundException | PropertyNotFoundException | IllegalThreadStateException ex)
         {
-            GenericLogger.asyncLog(this.getClass(), ex);
+            GenericLogger.createAsyncLog(this.getClass(), ex);
+            if (rampWatcher != null)
+                rampWatcher.close();
+            if (trainSpawner != null)
+                trainSpawner.close();
         }
 
         try
@@ -114,7 +111,7 @@ public class MapController implements Initializable
             streetVehicleSpawner.start();
         } catch (IOException | URISyntaxException | PropertyNotFoundException ex)
         {
-            GenericLogger.asyncLog(this.getClass(), ex);
+            GenericLogger.createAsyncLog(this.getClass(), ex);
         }
     }
 
@@ -143,7 +140,7 @@ public class MapController implements Initializable
             //((Node)(event.getSource())).getScene().getWindow().hide();
         } catch (IOException ex)
         {
-            GenericLogger.asyncLog(this.getClass(), Level.SEVERE, "Unable to open DialogView.fxml", ex);
+            GenericLogger.createAsyncLog(this.getClass(), Level.SEVERE, "Unable to open DialogView.fxml", ex);
         }
     }
 

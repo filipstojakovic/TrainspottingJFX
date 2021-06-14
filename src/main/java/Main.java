@@ -5,7 +5,7 @@ public abstract class Main
     public static void main(String[] args)
     {
         //RUN ME...
-        StartApp.main(args); //becouse bug...
+        StartApp.main(args);
 
     }
 

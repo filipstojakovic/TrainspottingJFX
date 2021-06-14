@@ -42,6 +42,15 @@ public class TrainStation
         trainRailRoads.add(trainLine);
     }
 
+    public static RailRoad getRailRoadBetweenStations(final TrainStation firstStation, final TrainStation secondStation)
+    {
+        return firstStation.getTrainRailRoads().stream()
+                .filter(trainLine1 -> firstStation.getStationName().equals(trainLine1.getStartStationName())
+                        && secondStation.getStationName().equals(trainLine1.getEndStationName()))
+                .findFirst()
+                .orElse(null);
+    }
+
     public void addParkedTrain(Train train)
     {
         parkedTrains.put(train.getTrainName(), train);

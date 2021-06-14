@@ -5,6 +5,10 @@ import project.vehiclestuff.trainstuff.locomotive.ManeuverLocomotive;
 import project.vehiclestuff.trainstuff.locomotive.PassengerLocomotive;
 import project.vehiclestuff.trainstuff.locomotive.UniversalLocomotive;
 import project.vehiclestuff.trainstuff.wagon.*;
+import project.vehiclestuff.trainstuff.wagon.passengerwagon.PassengerBedWagon;
+import project.vehiclestuff.trainstuff.wagon.passengerwagon.PassengerRestaurantWagon;
+import project.vehiclestuff.trainstuff.wagon.passengerwagon.PassengerSeatWagon;
+import project.vehiclestuff.trainstuff.wagon.passengerwagon.PassengerSleepWagon;
 
 import java.io.File;
 

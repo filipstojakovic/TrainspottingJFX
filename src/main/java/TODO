@@ -6,6 +6,12 @@ TODO: validacija vozova
 TODO: when train cant get to station
 TODO: validate if there is NO locomotive (only wagons)
 
+putnička - putnička,
+putnička - univerzalna,
+teretna - teretna,
+teretna - univerzalna
+
+Vagoni za posebne namjene mogu ići sa univerzalnom ili manevarskom lokomotivom.
 
 
 putnicka i univerzelana voze: putnicke vagone

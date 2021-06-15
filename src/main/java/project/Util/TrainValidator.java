@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
-public class TrainValidator
+public abstract class TrainValidator
 {
     public static boolean isTrainValid(Train train) throws TrainNotValidException
     {
@@ -42,26 +42,6 @@ public class TrainValidator
                 || (areLocomotivesValid(locomotiveParts, IManeuver.class) && areWagonsValid(wagonParts, hasUniversalLocomotive, IManeuver.class));
     }
 
-    public static boolean isTrainDestinationStationReachable(Train train) throws TrainNotValidException, UnreachableStationException
-    {
-        if (train.getDestinationStationsOrder() == null || train.getDestinationStationsOrder().isEmpty())
-            throw new TrainNotValidException("No destination station");
-
-        final Queue<TrainStation> stationsQueue = new LinkedList<>(train.getDestinationStationsOrder()); //deep copy
-        TrainStation firstStation = stationsQueue.poll();
-        TrainStation secondStation;
-        while (!stationsQueue.isEmpty())
-        {
-            secondStation = stationsQueue.poll();
-            if (TrainStation.getRailRoadBetweenStations(firstStation, secondStation) == null)
-                throw new UnreachableStationException("No railroad between " + firstStation.getStationName()
-                        + " and " + secondStation.getStationName());
-
-            firstStation = secondStation;
-        }
-        return true;
-    }
-
     private static boolean areLocomotivesValid(List<TrainPart> locomotiveParts, Class<?> className)
     {
         var validParts = locomotiveParts.stream()
@@ -81,4 +61,23 @@ public class TrainValidator
         return wagonParts.size() == validWagons.size();
     }
 
+    public static boolean isTrainDestinationStationReachable(Train train) throws TrainNotValidException, UnreachableStationException
+    {
+        if (train.getDestinationStationsOrder() == null || train.getDestinationStationsOrder().isEmpty())
+            throw new TrainNotValidException("No destination station");
+
+        final Queue<TrainStation> stationsQueue = new LinkedList<>(train.getDestinationStationsOrder()); //deep copy
+        TrainStation firstStation = stationsQueue.poll();
+        TrainStation secondStation;
+        while (!stationsQueue.isEmpty())
+        {
+            secondStation = stationsQueue.poll();
+            if (TrainStation.getRailRoadBetweenStations(firstStation, secondStation) == null)
+                throw new UnreachableStationException("No railroad between " + firstStation.getStationName()
+                        + " and " + secondStation.getStationName());
+
+            firstStation = secondStation;
+        }
+        return true;
+    }
 }

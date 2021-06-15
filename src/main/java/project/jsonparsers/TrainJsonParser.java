@@ -91,7 +91,7 @@ public class TrainJsonParser extends JsonParser
         //        Constructor<?> ctor = myClass.getConstructor();
         //        return (TrainPart) ctor.newInstance();
 
-        //switch does not work here
+        //Note: switch does not work here
         if (CargoLocomotive.class.getSimpleName().equals(className))
             return new CargoLocomotive();
         else if (ManeuverLocomotive.class.getSimpleName().equals(className))

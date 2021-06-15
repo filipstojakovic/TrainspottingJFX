@@ -2,6 +2,7 @@
   "train_speed": 500,
   "stationOrder": [
     "A",
+    "B",
     "C",
     "D"
   ],

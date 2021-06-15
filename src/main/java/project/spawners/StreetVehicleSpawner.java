@@ -202,6 +202,10 @@ public class StreetVehicleSpawner extends Thread
 
     public void close()
     {
+        synchronized (this)
+        {
+            notify();
+        }
         isActive = false;
         isWatcherActive = false;
     }

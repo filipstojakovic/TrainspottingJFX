@@ -14,7 +14,7 @@ public abstract class LabelUtils
     //Note: never use label.setStyle!!!!
     public static final double TEXT_FIELD_WIDTH = 24;
     public static final double TEXT_FIELD_HEIGHT = 24;
-    public static final int FONT_SIZE = 10;
+    public static final int FONT_SIZE = 9;
 
     public static Label createLabel(String text, String color)
     {
@@ -23,6 +23,8 @@ public abstract class LabelUtils
         setLableBackgroundAndBorderColor(label, color);
         label.setMinWidth(TEXT_FIELD_WIDTH);
         label.setMinHeight(TEXT_FIELD_HEIGHT);
+        label.setMaxWidth(TEXT_FIELD_WIDTH);
+        label.setMaxHeight(TEXT_FIELD_HEIGHT);
         label.setFont(Font.font(null, FontWeight.BOLD, FONT_SIZE));
 
         return label;

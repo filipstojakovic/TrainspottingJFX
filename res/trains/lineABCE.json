@@ -22,6 +22,14 @@
     {
       "part_type": "PassengerLocomotive",
       "engine": "steam"
+    },
+    {
+      "part_type": "PassengerLocomotive",
+      "engine": "steam"
+    },
+    {
+      "part_type": "PassengerLocomotive",
+      "engine": "steam"
     }
   ]
 }

@@ -1,10 +1,8 @@
 
 
-TODO: use file separator File.separator
 TODO: use Logger
-TODO: validacija vozova
-TODO: when train cant get to station
-TODO: validate if there is NO locomotive (only wagons)
+TODO: check equals and hash methods
+TODO: hide "never used methods";
 
 putnička - putnička,
 putnička - univerzalna,

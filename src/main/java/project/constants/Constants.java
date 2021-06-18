@@ -38,6 +38,7 @@ public abstract class Constants
                     PassengerRestaurantWagon.NAME + SPLITTER + "Passenger Restaurant Wagon\n" +
                     PassengerSeatWagon.NAME + SPLITTER + "Passenger Seat Wagon\n" +
                     PassengerSleepWagon.NAME + SPLITTER + "Passenger Sleep Wagon\n" +
+                    CargoWagon.NAME + SPLITTER + "Cargo Wagon" +
                     SpecialUseWagon.NAME + SPLITTER + "Special Use Wagon\n" +
                     '\n' +
                     ElectricField.THUNDER + SPLITTER + "Field has electricity";

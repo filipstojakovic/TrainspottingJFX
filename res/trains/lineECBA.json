@@ -22,6 +22,14 @@
     {
       "part_type": "UniversalLocomotive",
       "engine": "steam"
+    },
+    {
+      "part_type": "UniversalLocomotive",
+      "engine": "steam"
+    },
+    {
+      "part_type": "UniversalLocomotive",
+      "engine": "steam"
     }
   ]
 }

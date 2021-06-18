@@ -1,6 +1,10 @@
 package project.vehiclestuff.trainstuff.trainstation;
 
+import javafx.application.Platform;
+import project.Util.LabelUtils;
+import project.constants.ColorConstants;
 import project.map.Field.Field;
+import project.map.MapController;
 import project.vehiclestuff.trainstuff.RailRoad;
 import project.vehiclestuff.trainstuff.Train;
 
@@ -49,6 +53,46 @@ public class TrainStation
                         && secondStation.getStationName().equals(trainLine1.getEndStationName()))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void addTrainOnRailRoad(Train train, RailRoad railRoad)
+    {
+        railRoad.addTrainOnRoad(train);
+        setRampStatus(railRoad, true);
+    }
+
+    public void removeTrainOffRailRoad(Train train, RailRoad railRoad)
+    {
+        if (railRoad != null)
+            railRoad.removeTrainFromRailRoad(train);
+    }
+
+    public void openRampIfLastTrainOnRoad(Train train, RailRoad railRoad)
+    {
+        if (railRoad.getLastTrainOnRoad() == null || train.equals(railRoad.getLastTrainOnRoad()))
+        {
+            setRampStatus(railRoad, false);
+        }
+    }
+
+    public void setRampStatus(RailRoad railRoad, boolean isClosed)
+    {
+        railRoad.getRamps().forEach(ramp ->
+        {
+            synchronized (ramp.RAMP_LOCK)
+            {
+                if (ramp.isClosed() == isClosed)
+                    return;
+                ramp.setIsClosed(isClosed);
+                Platform.runLater(() ->
+                {
+                    var lbl = MapController.getGridCell(ramp.getxPosition(), ramp.getyPosition());
+                    if (lbl != null)
+                        LabelUtils.setLableBackgroundAndBorderColor(lbl, isClosed ? ColorConstants.RED : ColorConstants.BLACK);
+                });
+                ramp.RAMP_LOCK.notify();
+            }
+        });
     }
 
     public void addParkedTrain(Train train)

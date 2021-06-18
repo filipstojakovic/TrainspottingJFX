@@ -50,7 +50,7 @@ public class Train extends Thread
         final TrainStation beginingStation = destinationStationsOrder.poll();
         beginingStation.addParkedTrain(this);
 
-        TrainStation firstStation;
+        TrainStation firstStation = null;
         TrainStation secondStation = beginingStation;
 
         RailRoad currentRailRoad = null;
@@ -69,35 +69,35 @@ public class Train extends Thread
                 while (!oppositeRailRoad.isRailRoadEmpty())
                     Thread.sleep(trainSpeed);
 
-                currentRailRoad.addTrainOnRoad(this);
                 firstStation.removeParkedTrain(this); // remove from TrainStation parked train
+                firstStation.addTrainOnRailRoad(this, currentRailRoad);
 
                 trainHistory.addStationParkedTime(firstStation.getStationName(), System.currentTimeMillis() - currentTime);
                 trainHistory.addStationDepartureTime(firstStation.getStationName(), System.currentTimeMillis());
 
-                Field firstRailRoadField = currentRailRoad.getStartingField();
+                //train move
                 Field stationDepartureField = firstStation.getStartingFieldForDestination(secondStation.getStationName());
-                startTrainMovement(trainHistory, firstRailRoadField, stationDepartureField);
+                startTrainMovement(trainHistory, stationDepartureField, currentRailRoad, firstStation);
+                //train !move
 
-                parkTrainInStation();
+                firstStation.removeTrainOffRailRoad(this, currentRailRoad);
                 secondStation.addParkedTrain(this);
-                currentRailRoad.removeTrainFromRailRoad(this);
             }
 
         } catch (InterruptedException ex)
         {
             GenericLogger.createAsyncLog(this.getClass(), ex);
         }
-
-        if (currentRailRoad != null)
-            currentRailRoad.removeTrainFromRailRoad(this);
+        firstStation.removeTrainOffRailRoad(this, currentRailRoad);
         secondStation.removeParkedTrain(this);
 
         serializeTrainHistory(trainHistory);
     }
 
-    private void startTrainMovement(TrainHistory trainHistory, Field firstRailRoadField, Field stationDepartureField) throws InterruptedException
+    private void startTrainMovement(TrainHistory trainHistory, Field stationDepartureField
+            , RailRoad currentRailRoad, TrainStation departureStation) throws InterruptedException
     {
+        Field firstRailRoadField = currentRailRoad.getStartingField();
         int currentX = firstRailRoadField.getxPosition();
         int currentY = firstRailRoadField.getyPosition();
 
@@ -105,15 +105,30 @@ public class Train extends Thread
         int previousY = stationDepartureField.getyPosition();
 
         Field nextField = firstRailRoadField;
+
+        boolean railRoadHasRamp = currentRailRoad.getRamps().size() > 0;
+        int numOfRamps = currentRailRoad.getRamps().size();
+        int fieldsAfterRamp = 0;
         while (!(nextField instanceof TrainStationField))
         {
             Label label = MapController.getGridCell(nextField.getxPosition(), nextField.getyPosition());
             while (!"".equals(label.getText()))
                 Thread.sleep(trainSpeed);
 
+
             trainHistory.addPositionHistory(currentX, currentY);
             shiftBackTrainPosition(currentX, currentY);
             drawTrainOnMap();
+            if (railRoadHasRamp && nextField instanceof RampField)
+                numOfRamps--;
+            if (railRoadHasRamp && numOfRamps == 0)
+            {
+                fieldsAfterRamp++;
+                if (fieldsAfterRamp - currentRailRoad.getRamps().size() == moveableParts.size())
+                {
+                    departureStation.openRampIfLastTrainOnRoad(this, currentRailRoad);
+                }
+            }
             Thread.sleep(trainSpeed); // Train speed here
 
             nextField = Map.getNextField(currentX, currentY, previousX, previousY, RailField.class);
@@ -121,6 +136,26 @@ public class Train extends Thread
             previousY = currentY;
             currentX = nextField.getxPosition();
             currentY = nextField.getyPosition();
+            if (nextField instanceof TrainStationField)
+                parkTrainInStation(railRoadHasRamp, numOfRamps, fieldsAfterRamp, currentRailRoad, departureStation);
+        }
+    }
+
+    private void parkTrainInStation(boolean railRoadHasRamp, int numOfRamps, int fieldsAfterRamp, RailRoad currentRailRoad, TrainStation departureStation) throws InterruptedException
+    {
+        for (var ignored : moveableParts)
+        {
+            shiftBackTrainPosition(-1, -1);
+            drawTrainOnMap();
+            if (railRoadHasRamp && numOfRamps == 0)
+            {
+                fieldsAfterRamp++;
+                if (fieldsAfterRamp - currentRailRoad.getRamps().size() == moveableParts.size())
+                {
+                    departureStation.openRampIfLastTrainOnRoad(this, currentRailRoad);
+                }
+            }
+            Thread.sleep(trainSpeed); // Train speed here
         }
     }
 
@@ -144,16 +179,6 @@ public class Train extends Thread
         } catch (IOException ex)
         {
             GenericLogger.createAsyncLog(this.getClass(), ex);
-        }
-    }
-
-    private void parkTrainInStation() throws InterruptedException
-    {
-        for (var trainPart : moveableParts)
-        {
-            shiftBackTrainPosition(-1, -1);
-            drawTrainOnMap();
-            Thread.sleep(trainSpeed); // Train speed here
         }
     }
 
@@ -270,13 +295,16 @@ public class Train extends Thread
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Train train = (Train) o;
-        return isElectric == train.isElectric
-                && trainPartList.equals(train.trainPartList);
+        return trainSpeed == train.trainSpeed
+                && isElectric == train.isElectric
+                && trainName.equals(train.trainName)
+                && Objects.equals(destinationStationsOrder, train.destinationStationsOrder)
+                && trainPartList.equals(train.trainPartList) && moveableParts.equals(train.moveableParts);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(destinationStationsOrder, trainPartList, isElectric);
+        return Objects.hash(trainName, destinationStationsOrder, trainPartList, moveableParts, trainSpeed, isElectric);
     }
 }

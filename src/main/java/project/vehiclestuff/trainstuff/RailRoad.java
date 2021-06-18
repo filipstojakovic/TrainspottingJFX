@@ -12,7 +12,8 @@ public class RailRoad
     private List<Field> roadFields;
     private List<RampField> ramps;
 
-    private HashMap<String, Train> trainsOnRailRoad;
+    //private HashMap<String, Train> trainsOnRailRoad;
+    private List<Train> trainsOnRailRoad;
 
     public RailRoad()
     {
@@ -24,17 +25,22 @@ public class RailRoad
         this.endStationName = endStationName;
         this.roadFields = roadFields;
         this.ramps = ramps;
-        trainsOnRailRoad = new HashMap<>();
+        trainsOnRailRoad = new ArrayList<>();
     }
 
     public synchronized void addTrainOnRoad(Train train)
     {
-        trainsOnRailRoad.put(train.getTrainName(), train);
+        trainsOnRailRoad.add(train);
     }
 
     public synchronized void removeTrainFromRailRoad(Train train)
     {
-        trainsOnRailRoad.remove(train.getTrainName());
+        trainsOnRailRoad.remove(train);
+    }
+
+    public synchronized Train getLastTrainOnRoad()
+    {
+        return !trainsOnRailRoad.isEmpty() ? trainsOnRailRoad.get(trainsOnRailRoad.size() - 1) : null;
     }
 
     //create reverse copy

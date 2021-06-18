@@ -77,18 +77,12 @@ public class MapController implements Initializable
 
     private TrainSpawner trainSpawner;
     private StreetVehicleSpawner streetVehicleSpawner;
-    private RampWatcher rampWatcher;
 
     @FXML
     void onStartBtnClicked(ActionEvent event)
     {
         try
         {
-            if (rampWatcher != null)
-                rampWatcher.close();
-            rampWatcher = new RampWatcher(railRoads);
-            rampWatcher.start();
-
             if (trainSpawner != null)
                 trainSpawner.close();
             trainSpawner = mapModel.initTrainSpawner(trainStationMap);
@@ -97,8 +91,6 @@ public class MapController implements Initializable
         } catch (URISyntaxException | FileNotFoundException | PropertyNotFoundException | IllegalThreadStateException ex)
         {
             GenericLogger.createAsyncLog(this.getClass(), ex);
-            if (rampWatcher != null)
-                rampWatcher.close();
             if (trainSpawner != null)
                 trainSpawner.close();
         }

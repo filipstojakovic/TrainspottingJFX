@@ -1,11 +1,15 @@
 package project.map.Field;
 
+import project.vehiclestuff.trainstuff.IMoveable;
+
 import java.util.Objects;
 
 public abstract class Field
 {
     protected final int xPosition;
     protected final int yPosition;
+
+    protected IMoveable moveableObject;
 
     public Field(int xPosition, int yPosition)
     {
@@ -21,6 +25,16 @@ public abstract class Field
     public int getyPosition()
     {
         return yPosition;
+    }
+
+    public IMoveable getMoveableObject()
+    {
+        return moveableObject;
+    }
+
+    public void setMoveableObject(IMoveable moveableObject)
+    {
+        this.moveableObject = moveableObject;
     }
 
     @Override

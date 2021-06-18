@@ -27,7 +27,7 @@ public class RampField extends Field
         return isClosed;
     }
 
-    public synchronized void setClosed(boolean closed)
+    public synchronized void setIsClosed(boolean closed)
     {
         isClosed = closed;
     }

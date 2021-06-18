@@ -26,7 +26,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 public class StreetVehicleSpawner extends Thread
 {
     public static final int MINOR_DELAY = 200;
-    private final int SPAWN_SPEED = 2000;
+    private static final int SPAWN_SPEED = 2000;
     private static final String MOVE_SPEED_PROP = "_speed";
     private static final String VEHICLE_NUM_PROP = "_num_of_cars";
     private Random random;

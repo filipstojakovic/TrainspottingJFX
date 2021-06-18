@@ -47,6 +47,7 @@ public class RampWatcher extends Thread
                 } catch (NoSuchElementException ex)
                 {
                     GenericLogger.createAsyncLog(this.getClass(), ex);
+                    continue;
                 }
 
                 boolean shouldClose;

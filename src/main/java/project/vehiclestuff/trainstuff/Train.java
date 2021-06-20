@@ -88,7 +88,8 @@ public class Train extends Thread
         {
             GenericLogger.createAsyncLog(this.getClass(), ex);
         }
-        firstStation.removeTrainOffRailRoad(this, currentRailRoad);
+        if (firstStation != null)
+            firstStation.removeTrainOffRailRoad(this, currentRailRoad);
         secondStation.removeParkedTrain(this);
 
         serializeTrainHistory(trainHistory);
@@ -136,6 +137,7 @@ public class Train extends Thread
             previousY = currentY;
             currentX = nextField.getxPosition();
             currentY = nextField.getyPosition();
+
             if (nextField instanceof TrainStationField)
                 parkTrainInStation(railRoadHasRamp, numOfRamps, fieldsAfterRamp, currentRailRoad, departureStation);
         }

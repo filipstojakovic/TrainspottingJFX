@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Label;
 import project.Util.GenericLogger;
 import project.Util.Utils;
+import project.exception.TrainNotValidException;
 import project.map.Field.Field;
 import project.map.Field.RailField;
 import project.map.Field.RampField;
@@ -44,55 +45,65 @@ public class Train extends Thread
     @Override
     public void run()
     {
-        constructMoveableParts();
-
-        final TrainHistory trainHistory = new TrainHistory();
-        final TrainStation beginingStation = destinationStationsOrder.poll();
-        beginingStation.addParkedTrain(this);
-
-        TrainStation firstStation = null;
-        TrainStation secondStation = beginingStation;
-
-        RailRoad currentRailRoad = null;
-        RailRoad oppositeRailRoad = null;
         try
         {
-            while (!destinationStationsOrder.isEmpty())
+            if (trainPartList.isEmpty())
+                throw new TrainNotValidException("Train has no parts");
+            constructMoveableParts();
+
+            final TrainHistory trainHistory = new TrainHistory();
+            final TrainStation beginingStation = destinationStationsOrder.poll();
+            beginingStation.addParkedTrain(this);
+
+            TrainStation firstStation = null;
+            TrainStation secondStation = beginingStation;
+
+            RailRoad currentRailRoad = null;
+            RailRoad oppositeRailRoad = null;
+            try
             {
-                long currentTime = System.currentTimeMillis();
-                firstStation = secondStation;
-                secondStation = destinationStationsOrder.poll();
+                while (!destinationStationsOrder.isEmpty())
+                {
+                    long currentTime = System.currentTimeMillis();
+                    firstStation = secondStation;
+                    secondStation = destinationStationsOrder.poll();
 
-                currentRailRoad = TrainStation.getRailRoadBetweenStations(firstStation, secondStation);
-                oppositeRailRoad = TrainStation.getRailRoadBetweenStations(secondStation, firstStation);
+                    currentRailRoad = TrainStation.getRailRoadBetweenStations(firstStation, secondStation);
+                    oppositeRailRoad = TrainStation.getRailRoadBetweenStations(secondStation, firstStation);
 
-                while (!oppositeRailRoad.isRailRoadEmpty())
-                    Thread.sleep(trainSpeed);
+                    while (!oppositeRailRoad.isRailRoadEmpty())
+                        Thread.sleep(trainSpeed);
 
-                firstStation.removeParkedTrain(this); // remove from TrainStation parked train
-                firstStation.addTrainOnRailRoad(this, currentRailRoad);
+                    firstStation.removeParkedTrain(this); // remove from TrainStation parked train
+                    firstStation.addTrainOnRailRoad(this, currentRailRoad);
 
-                trainHistory.addStationParkedTime(firstStation.getStationName(), System.currentTimeMillis() - currentTime);
-                trainHistory.addStationDepartureTime(firstStation.getStationName(), System.currentTimeMillis());
+                    trainHistory.addStationParkedTime(firstStation.getStationName(), System.currentTimeMillis() - currentTime);
+                    trainHistory.addStationDepartureTime(firstStation.getStationName(), System.currentTimeMillis());
 
-                //train move
-                Field stationDepartureField = firstStation.getStartingFieldForDestination(secondStation.getStationName());
-                startTrainMovement(trainHistory, stationDepartureField, currentRailRoad, firstStation);
-                //train !move
+                    //train move
+                    Field stationDepartureField = firstStation.getStartingFieldForDestination(secondStation.getStationName());
+                    startTrainMovement(trainHistory, stationDepartureField, currentRailRoad, firstStation);
+                    //train !move
 
-                firstStation.removeTrainOffRailRoad(this, currentRailRoad);
-                secondStation.addParkedTrain(this);
+                    firstStation.removeTrainOffRailRoad(this, currentRailRoad);
+                    secondStation.addParkedTrain(this);
+                }
+
+            } catch (InterruptedException ex)
+            {
+                GenericLogger.createAsyncLog(this.getClass(), ex);
             }
+            if (firstStation != null)
+                firstStation.removeTrainOffRailRoad(this, currentRailRoad);
+            secondStation.removeParkedTrain(this);
+            serializeTrainHistory(trainHistory);
 
-        } catch (InterruptedException ex)
+        } catch (TrainNotValidException ex)
         {
             GenericLogger.createAsyncLog(this.getClass(), ex);
         }
-        if (firstStation != null)
-            firstStation.removeTrainOffRailRoad(this, currentRailRoad);
-        secondStation.removeParkedTrain(this);
 
-        serializeTrainHistory(trainHistory);
+
     }
 
     private void startTrainMovement(TrainHistory trainHistory, Field stationDepartureField
@@ -157,7 +168,7 @@ public class Train extends Thread
                     departureStation.openRampIfLastTrainOnRoad(this, currentRailRoad);
                 }
             }
-            Thread.sleep(trainSpeed); // Train speed here
+            Thread.sleep(trainSpeed);
         }
     }
 

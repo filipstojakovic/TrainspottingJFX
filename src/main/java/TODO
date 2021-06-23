@@ -1,7 +1,4 @@
 
-
-TODO: use Logger
-TODO: check equals and hash methods
 TODO: hide "never used methods";
 
 putnička - putnička,
@@ -11,12 +8,3 @@ teretna - univerzalna
 
 Vagoni za posebne namjene mogu ići sa univerzalnom ili manevarskom lokomotivom.
 
-
-putnicka i univerzelana voze: putnicke vagone
-teretna i univerzalana : teretne vagone
-univerzalna i manvevarska: special use wagon
-
-putnicki: putnicki vagon
-teretni: teretni vagon
-univerzalni: putnicke, teretne, special use
-manevarksa: special use

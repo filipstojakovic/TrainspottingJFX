@@ -1,0 +1,23 @@
+{
+  "train_speed": 500,
+  "stationOrder": [
+    "A",
+    "B",
+    "C",
+    "E"
+  ],
+  "train_parts": [
+    {
+      "part_type": "PassengerLocomotive",
+      "engine": "steam"
+    },
+    {
+      "part_type": "CargoLocomotive",
+      "engine": "steam"
+    },
+    {
+      "part_type": "PassengerLocomotive",
+      "engine": "steam"
+    }
+  ]
+}

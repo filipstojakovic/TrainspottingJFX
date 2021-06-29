@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public abstract class TrainPart implements IMoveable
 {
-    //ABSTRACT
+    //ABSTRACT used for wagons and locomotives
     protected int currentX = -1;
     protected int currentY = -1;
 

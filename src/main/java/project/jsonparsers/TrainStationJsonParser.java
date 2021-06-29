@@ -17,7 +17,6 @@ public class TrainStationJsonParser extends JsonParser
         HashMap<String, TrainStation> trainStations = new HashMap<>();
         JSONArray jsonArray = (JSONArray) getJsonObjectFromFile(path);
 
-        // go line by line
         for (Object value : jsonArray)
         {
             JSONObject jsonObject = (JSONObject) value;

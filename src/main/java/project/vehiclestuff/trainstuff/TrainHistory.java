@@ -25,9 +25,9 @@ public class TrainHistory implements Serializable
         }
     }
 
-    private List<Position> positionsHistory;
-    private HashMap<String, Long> stationsDepartureTime;
-    private HashMap<String, Long> stationsParkedTime;
+    private final List<Position> positionsHistory;
+    private final HashMap<String, Long> stationsDepartureTime;
+    private final HashMap<String, Long> stationsParkedTime;
 
     public TrainHistory()
     {
@@ -109,7 +109,7 @@ public class TrainHistory implements Serializable
             stringBuilder.append("(").append(position.x).append(",").append(position.y).append(")").append(ARROW);
         }
         if (stringBuilder.length() > ARROW.length())
-            stringBuilder.setLength(stringBuilder.length() - ARROW.length());
+            stringBuilder.setLength(stringBuilder.length() - ARROW.length()); // remove last arrow
         return stringBuilder.toString();
     }
 

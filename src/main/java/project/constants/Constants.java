@@ -27,7 +27,6 @@ public abstract class Constants
 
     public static final int MAP_DIM = 30;
 
-
     public static final String SPLITTER = " - ";
     public static final String INFO_TEXT =
             PassengerLocomotive.NAME + SPLITTER + "Passenger Locomotive\n" +
@@ -38,7 +37,7 @@ public abstract class Constants
                     PassengerRestaurantWagon.NAME + SPLITTER + "Passenger Restaurant Wagon\n" +
                     PassengerSeatWagon.NAME + SPLITTER + "Passenger Seat Wagon\n" +
                     PassengerSleepWagon.NAME + SPLITTER + "Passenger Sleep Wagon\n" +
-                    CargoWagon.NAME + SPLITTER + "Cargo Wagon" +
+                    CargoWagon.NAME + SPLITTER + "Cargo Wagon\n" +
                     SpecialUseWagon.NAME + SPLITTER + "Special Use Wagon\n" +
                     '\n' +
                     ElectricField.THUNDER + SPLITTER + "Field has electricity";

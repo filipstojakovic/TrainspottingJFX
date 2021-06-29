@@ -3,6 +3,7 @@ package project.Util;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -35,6 +36,7 @@ public abstract class GenericLogger
         }
         //}
     }
+
 
     public static void createAsyncLog(Class<?> C, Exception ex)
     {

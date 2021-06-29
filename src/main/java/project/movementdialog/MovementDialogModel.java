@@ -29,6 +29,7 @@ public class MovementDialogModel
         properties = Utils.loadPropertie(Constants.CONFIGURATION_FILE);
     }
 
+    //callback funkction
     public void getAllFilesFromDir(Consumer<List<String>> function)
     {
         new Thread(() ->

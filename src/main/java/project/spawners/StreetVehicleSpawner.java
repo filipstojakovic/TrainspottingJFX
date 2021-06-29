@@ -25,14 +25,14 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 public class StreetVehicleSpawner extends Thread
 {
-    public static final int MINOR_DELAY = 200;
+    public static final int MINOR_DELAY = 200; // for watcher bug
     private static final int SPAWN_SPEED = 2000;
     private static final String MOVE_SPEED_PROP = "_speed";
     private static final String VEHICLE_NUM_PROP = "_num_of_cars";
-    private Random random;
+    private final Random random;
 
     private final List<Street> streets;
-    private final HashMap<String, Integer> streetNumOfVehiclesMap;
+    private final HashMap<String, Integer> streetNumOfVehiclesMap; // streetname : vehicle_counter
 
     Properties properties;
     private boolean isActive;
@@ -60,7 +60,7 @@ public class StreetVehicleSpawner extends Thread
                 String streetSpeedProp = properties.getProperty(street.getStreetName() + MOVE_SPEED_PROP);
                 if (streetSpeedProp == null)
                     throw new PropertyNotFoundException(street.getStreetName() + MOVE_SPEED_PROP);
-                int streetSpeed = Integer.parseInt(streetSpeedProp);
+                int streetSpeed = Integer.parseInt(streetSpeedProp); // can throw ClassCastException
                 street.setSpeedLimit(streetSpeed);
 
                 String maxNumOfVehicleProp = properties.getProperty(street.getStreetName() + VEHICLE_NUM_PROP);
@@ -70,12 +70,11 @@ public class StreetVehicleSpawner extends Thread
                 int currentMaxNumOfVehicles = street.getMaxNumOfVehicles();
                 if (propertieMaxNumOfVehicles > currentMaxNumOfVehicles)
                 {
-                    street.setMaxNumOfVehicles(propertieMaxNumOfVehicles);
+                    street.setMaxNumOfVehicles(propertieMaxNumOfVehicles); // set max num of vehicles on street
                     notify();
                 }
             }
         }
-
     }
 
     @Override
@@ -159,12 +158,12 @@ public class StreetVehicleSpawner extends Thread
                         WatchEvent.Kind<?> kind = event.kind();
                         WatchEvent<Path> ev = (WatchEvent<Path>) event;
                         Path fileName = ev.context();
-                        if (fileName.toString().trim().equals("config.properties")
+                        if ("config.properties".equals(fileName.toString().trim())
                                 && kind.equals(ENTRY_MODIFY))
                         {
                             try
                             {
-                                Thread.sleep(MINOR_DELAY);
+                                Thread.sleep(MINOR_DELAY); // becouse of bugs
                             } catch (InterruptedException ex)
                             {
                                 GenericLogger.createAsyncLog(this.getClass(), ex);
@@ -189,7 +188,6 @@ public class StreetVehicleSpawner extends Thread
     }
 
     private static long num = 0;
-
     private StreetVehicle createVehicle(Street streetThatIsNotFull)
     {
         int speedLimit = streetThatIsNotFull.getSpeedLimit();

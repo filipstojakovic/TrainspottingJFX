@@ -23,7 +23,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 
 public class TrainSpawner extends Thread
 {
-    public static final int MINOR_DELAY = 200;
+    public static final int MINOR_DELAY = 200; // for watcher bug
     private final File watchDirectoryFile;
     public static String trainHistoryDirPath;
     private final HashMap<String, TrainStation> trainStationMap;

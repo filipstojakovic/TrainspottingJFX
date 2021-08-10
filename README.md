@@ -1,1 +1,1 @@
-![Alt Text](https://github.com/filipstojakovic/TrainspottingJFX/tree/master/res/trains.gif)
+<img src="https://github.com/filipstojakovic/TrainspottingJFX/blob/master/res/trains.gif"/>
